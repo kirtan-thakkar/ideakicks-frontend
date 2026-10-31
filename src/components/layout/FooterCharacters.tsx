@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowRight, Sparkle } from "@phosphor-icons/react";
+import { ArrowRight } from "@phosphor-icons/react";
 import { IDEAKICKS_CHARACTERS, IdeakicksCharacter } from "../../data/characters";
 
 const CD = "'Clash Display', sans-serif";
@@ -40,35 +40,24 @@ export function FooterCharacters() {
     <div
       ref={containerRef}
       id="ideakicks-characters"
-      className="relative w-full border-b border-white/10 pb-20 pt-4 mb-16 scroll-mt-24"
+      className="relative w-full border-b border-white/10 pb-24 pt-4 mb-16 scroll-mt-24"
       style={{ fontFamily: SAT }}
     >
-      {/* Editorial Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12 text-center sm:text-left">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/08 border border-white/15 text-[#6FD179] text-xs font-semibold tracking-wide mb-3">
-            <Sparkle size={13} weight="fill" />
-            The Ideakicks Archetypes
-          </div>
-          <h3
-            className="text-2xl sm:text-3xl lg:text-4xl text-white font-medium tracking-tight"
-            style={{ fontFamily: CD }}
-          >
-            Backed by character
-          </h3>
-          <p className="text-white/60 text-sm mt-1 max-w-xl">
-            Meet the five forces powering our ecosystem. Hover over each character to reveal their story.
-          </p>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-2 text-xs text-white/40">
-          <span className="w-2 h-2 rounded-full bg-[#6FD179] animate-pulse" />
-          <span>Interactive Character Gallery</span>
-        </div>
+      {/* Editorial Header - Clean & Minimal */}
+      <div className="mb-14 text-center sm:text-left">
+        <h3
+          className="text-3xl sm:text-4xl lg:text-5xl text-white font-medium tracking-tight mb-2"
+          style={{ fontFamily: CD }}
+        >
+          Backed by character
+        </h3>
+        <p className="text-white/65 text-base sm:text-lg max-w-xl">
+          Hover over each character to reveal their story.
+        </p>
       </div>
 
-      {/* 5 Playfully Tilted Character Cards */}
-      <div className="relative max-w-5xl mx-auto flex flex-wrap lg:flex-nowrap items-center justify-center gap-5 sm:gap-6 lg:gap-7 pt-4 pb-10">
+      {/* 5 Organic Characters with Rotations (No Card Boxes, No Borders) */}
+      <div className="relative max-w-6xl mx-auto flex flex-wrap lg:flex-nowrap items-center justify-center gap-8 sm:gap-10 lg:gap-12 pt-6 pb-12">
         {IDEAKICKS_CHARACTERS.map((char, index) => {
           const isActive = activeId === char.id;
           const isAnyActive = activeId !== null;
@@ -80,74 +69,67 @@ export function FooterCharacters() {
               onMouseEnter={() => setHoveredId(char.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              {/* Character Sticker Button */}
+              {/* Character Cutout Button - Free-floating illustration without card borders */}
               <button
                 type="button"
                 onClick={() => setPinnedId(pinnedId === char.id ? null : char.id)}
                 aria-expanded={isActive}
                 aria-label={`View info for ${char.name} - ${char.title}`}
-                className={`group relative flex flex-col items-center p-4 sm:p-5 rounded-3xl cursor-pointer outline-none transition-all duration-300 ease-out backdrop-blur-md ${
+                className={`group relative flex flex-col items-center cursor-pointer outline-none transition-all duration-300 ease-out select-none ${
                   isActive
-                    ? "bg-white/20 border-2 border-[#6FD179] shadow-[0_25px_50px_rgba(0,0,0,0.5)] z-30"
+                    ? "z-30"
                     : isAnyActive
-                    ? "bg-white/06 border border-white/15 opacity-45 hover:opacity-100 z-10"
-                    : "bg-white/08 hover:bg-white/15 border border-white/20 hover:border-white/40 shadow-[0_16px_36px_rgba(0,0,0,0.3)] z-10"
+                    ? "opacity-40 hover:opacity-100 z-10"
+                    : "opacity-95 hover:opacity-100 z-10"
                 }`}
                 style={{
                   transform: isActive
-                    ? "rotate(0deg) translateY(-14px) scale(1.08)"
+                    ? "rotate(0deg) translateY(-16px) scale(1.12)"
                     : `rotate(${char.rotationDeg}deg) translateY(${char.yOffsetPx}px)`,
-                  minWidth: "155px",
-                  maxWidth: "180px",
                 }}
               >
-                {/* Unified Ambient Brand Glow */}
+                {/* Soft Ambient Glow on Hover */}
                 <div
-                  className="pointer-events-none absolute inset-0 rounded-3xl blur-xl transition-opacity duration-300 -z-10"
+                  className="pointer-events-none absolute -inset-6 rounded-full blur-2xl transition-opacity duration-300 -z-10"
                   style={{
-                    background: "radial-gradient(circle at center, rgba(111,209,121,0.35) 0%, transparent 75%)",
-                    opacity: isActive ? 0.8 : 0,
+                    background: "radial-gradient(circle, rgba(111,209,121,0.45) 0%, transparent 70%)",
+                    opacity: isActive ? 1 : 0,
                   }}
                 />
 
-                {/* Character Illustration with Contrast Canvas */}
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center mb-3">
-                  <div className="absolute inset-0 rounded-full bg-white/12 border border-white/20 transition-all duration-300 group-hover:scale-105 group-hover:bg-white/18" />
+                {/* Character Illustration - Large & Prominent */}
+                <div className="relative w-36 h-36 sm:w-44 sm:h-44 lg:w-48 lg:h-48 flex items-center justify-center mb-3">
                   <img
                     src={char.svg}
-                    alt={`${char.name} (${char.animal})`}
-                    className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-110"
+                    alt={`${char.name} - ${char.title}`}
+                    className="w-full h-full object-contain filter drop-shadow-[0_16px_28px_rgba(0,0,0,0.55)] transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
 
-                {/* Name & Title */}
+                {/* Character Name - Large, Clear, Clash Display */}
                 <span
-                  className="text-base font-semibold text-white tracking-wide mb-0.5"
+                  className="text-2xl sm:text-3xl font-semibold text-white tracking-tight transition-colors duration-200 group-hover:text-[#6FD179]"
                   style={{ fontFamily: CD }}
                 >
                   {char.name}
                 </span>
 
-                <span className="text-xs text-white/80 font-medium mb-2">
+                {/* Title / Role - Legible, Clean, Satoshi */}
+                <span className="text-sm sm:text-base text-white/75 font-medium mt-1 transition-colors duration-200 group-hover:text-white">
                   {char.title}
-                </span>
-
-                {/* Animal badge */}
-                <span className="text-[0.65rem] font-medium uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">
-                  {char.animal}
                 </span>
               </button>
 
-              {/* Floating Info Popover Card directly attached to this character */}
+              {/* Floating Info Popover Card */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.94 }}
+                    initial={{ opacity: 0, y: -10, scale: 0.94 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -6, scale: 0.94 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.94 }}
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    className={`absolute top-[calc(100%+14px)] z-50 w-[280px] sm:w-[310px] pointer-events-auto ${
+                    className={`absolute top-[calc(100%+18px)] z-50 w-[310px] sm:w-[350px] pointer-events-auto ${
                       index === 0
                         ? "left-0 sm:left-1/2 sm:-translate-x-1/2"
                         : index === IDEAKICKS_CHARACTERS.length - 1
@@ -156,9 +138,9 @@ export function FooterCharacters() {
                     }`}
                   >
                     <div
-                      className="relative rounded-2xl bg-[#06243E]/95 backdrop-blur-2xl border border-white/20 p-5 text-white shadow-[0_25px_60px_rgba(0,0,0,0.7)]"
+                      className="relative rounded-2xl bg-[#06243E]/95 backdrop-blur-2xl border border-white/20 p-6 text-white shadow-[0_28px_65px_rgba(0,0,0,0.75)]"
                       style={{
-                        boxShadow: "0 20px 50px -10px rgba(111,209,121,0.25), inset 0 1px 0 rgba(255,255,255,0.2)",
+                        boxShadow: "0 20px 50px -10px rgba(111,209,121,0.28), inset 0 1px 0 rgba(255,255,255,0.2)",
                       }}
                     >
                       {/* Caret pointing UP to the character */}
@@ -167,41 +149,41 @@ export function FooterCharacters() {
                       />
 
                       {/* Header */}
-                      <div className="flex items-start justify-between gap-3 mb-2.5">
+                      <div className="flex items-start justify-between gap-3 mb-3">
                         <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-lg font-semibold text-white" style={{ fontFamily: CD }}>
-                              {char.name}
-                            </h4>
-                            <span className="text-[0.65rem] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#6FD179]/20 text-[#6FD179] border border-[#6FD179]/30">
-                              {char.animal}
-                            </span>
-                          </div>
-                          <p className="text-xs text-white/60 font-medium">{char.title}</p>
+                          <h4
+                            className="text-xl sm:text-2xl font-semibold text-white tracking-tight"
+                            style={{ fontFamily: CD }}
+                          >
+                            {char.name}
+                          </h4>
+                          <p className="text-sm sm:text-base text-[#6FD179] font-medium mt-0.5">
+                            {char.title}
+                          </p>
                         </div>
 
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center p-1.5 border border-white/15 bg-white/08 flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center p-1.5 border border-white/15 bg-white/08 flex-shrink-0">
                           <img src={char.svg} alt={char.name} className="w-full h-full object-contain" />
                         </div>
                       </div>
 
                       {/* Motto */}
-                      <p className="text-xs text-white/90 italic font-medium leading-snug mb-2.5">
+                      <p className="text-sm sm:text-base text-white/95 italic font-medium leading-snug mb-3">
                         "{char.tagline}"
                       </p>
 
                       {/* Narrative description */}
-                      <p className="text-xs leading-relaxed text-white/70 mb-4">
+                      <p className="text-sm leading-relaxed text-white/80 mb-5">
                         {char.bio}
                       </p>
 
                       {/* CTA link */}
                       <Link
                         to={char.link}
-                        className="inline-flex items-center justify-between w-full py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#6FD179] text-[#082D4D] hover:bg-[#5bc468] transition-all duration-200 group/link"
+                        className="inline-flex items-center justify-between w-full py-3 px-4 rounded-xl text-sm font-semibold bg-[#6FD179] text-[#082D4D] hover:bg-[#5bc468] transition-all duration-200 group/link shadow-md hover:shadow-lg"
                       >
                         <span>{char.linkLabel}</span>
-                        <ArrowRight size={13} weight="bold" className="transition-transform group-hover/link:translate-x-1" />
+                        <ArrowRight size={15} weight="bold" className="transition-transform group-hover/link:translate-x-1" />
                       </Link>
                     </div>
                   </motion.div>
