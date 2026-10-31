@@ -7,37 +7,12 @@ import { IDEAKICKS_CHARACTERS, IdeakicksCharacter } from "../../data/characters"
 const CD = "'Clash Display', sans-serif";
 const SAT = "'Satoshi', sans-serif";
 
-interface CharacterStickerConfig {
-  id: string;
-  rotationDeg: number;
-  yOffsetPx: number;
-}
-
-// 4 characters with distinct hand-tuned rotations & offsets
-const CHARACTER_CONFIG: CharacterStickerConfig[] = [
-  { id: "eagle", rotationDeg: -7, yOffsetPx: 6 },
-  { id: "bee", rotationDeg: 5, yOffsetPx: -8 },
-  { id: "octopus", rotationDeg: -4, yOffsetPx: 8 },
-  { id: "owl", rotationDeg: 7, yOffsetPx: -4 },
-];
-
 export function FooterCharacters() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [pinnedId, setPinnedId] = useState<string | null>(null);
-  const [activeMakersCharacter, setActiveMakersCharacter] = useState<"octopus" | "ant">("octopus");
   const containerRef = useRef<HTMLDivElement>(null);
 
   const activeId = hoveredId || pinnedId;
-
-  // Build the 4 characters list (allowing swap between Octopus and Ant if user wants Ant)
-  const displayedConfig = CHARACTER_CONFIG.map((cfg) => {
-    if (cfg.id === "octopus" && activeMakersCharacter === "ant") {
-      return { id: "ant", rotationDeg: -5, yOffsetPx: 6 };
-    }
-    return cfg;
-  });
-
-  const activeChar = IDEAKICKS_CHARACTERS.find((c) => c.id === activeId);
 
   // Close pinned on escape or outside click
   useEffect(() => {
@@ -69,11 +44,11 @@ export function FooterCharacters() {
       style={{ fontFamily: SAT }}
     >
       {/* Editorial Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14 text-center sm:text-left">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12 text-center sm:text-left">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/08 border border-white/15 text-[#6FD179] text-xs font-semibold tracking-wide mb-3">
             <Sparkle size={13} weight="fill" />
-            Ideakicks Mascot Spirits
+            The Ideakicks Archetypes
           </div>
           <h3
             className="text-2xl sm:text-3xl lg:text-4xl text-white font-medium tracking-tight"
@@ -82,44 +57,19 @@ export function FooterCharacters() {
             Backed by character
           </h3>
           <p className="text-white/60 text-sm mt-1 max-w-xl">
-            Four distinct forces guiding every project from raw spark to real-world launch. Hover over each to reveal their role.
+            Meet the five forces powering our ecosystem. Hover over each character to reveal their story.
           </p>
         </div>
 
-        {/* Character swap toggle (Ant vs Octopus) */}
-        <div className="flex items-center justify-center sm:justify-end gap-2 text-xs">
-          <span className="text-white/40">3rd spirit:</span>
-          <button
-            type="button"
-            onClick={() => setActiveMakersCharacter("octopus")}
-            className={`px-2.5 py-1 rounded-full text-[0.7rem] font-medium transition-all cursor-pointer ${
-              activeMakersCharacter === "octopus"
-                ? "bg-white/20 text-white border border-white/40"
-                : "bg-white/05 text-white/50 hover:text-white"
-            }`}
-          >
-            Octopus
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveMakersCharacter("ant")}
-            className={`px-2.5 py-1 rounded-full text-[0.7rem] font-medium transition-all cursor-pointer ${
-              activeMakersCharacter === "ant"
-                ? "bg-white/20 text-white border border-white/40"
-                : "bg-white/05 text-white/50 hover:text-white"
-            }`}
-          >
-            Ant
-          </button>
+        <div className="hidden sm:flex items-center gap-2 text-xs text-white/40">
+          <span className="w-2 h-2 rounded-full bg-[#6FD179] animate-pulse" />
+          <span>Interactive Character Gallery</span>
         </div>
       </div>
 
-      {/* 4 Playfully Tilted Character Stickers / Cards */}
-      <div className="relative max-w-4xl mx-auto flex flex-wrap md:flex-nowrap items-center justify-center gap-6 sm:gap-8 lg:gap-10 pt-4 pb-6">
-        {displayedConfig.map((cfg, index) => {
-          const char = IDEAKICKS_CHARACTERS.find((c) => c.id === cfg.id);
-          if (!char) return null;
-
+      {/* 5 Playfully Tilted Character Cards */}
+      <div className="relative max-w-5xl mx-auto flex flex-wrap lg:flex-nowrap items-center justify-center gap-5 sm:gap-6 lg:gap-7 pt-4 pb-10">
+        {IDEAKICKS_CHARACTERS.map((char, index) => {
           const isActive = activeId === char.id;
           const isAnyActive = activeId !== null;
 
@@ -135,57 +85,57 @@ export function FooterCharacters() {
                 type="button"
                 onClick={() => setPinnedId(pinnedId === char.id ? null : char.id)}
                 aria-expanded={isActive}
-                aria-label={`View info for ${char.name}`}
-                className={`group relative flex flex-col items-center p-5 rounded-3xl cursor-pointer outline-none transition-all duration-300 ease-out backdrop-blur-md ${
+                aria-label={`View info for ${char.name} - ${char.title}`}
+                className={`group relative flex flex-col items-center p-4 sm:p-5 rounded-3xl cursor-pointer outline-none transition-all duration-300 ease-out backdrop-blur-md ${
                   isActive
-                    ? "bg-white/20 border-2 border-white/60 shadow-[0_25px_50px_rgba(0,0,0,0.5)] z-30"
+                    ? "bg-white/20 border-2 border-[#6FD179] shadow-[0_25px_50px_rgba(0,0,0,0.5)] z-30"
                     : isAnyActive
-                    ? "bg-white/08 border border-white/15 opacity-55 hover:opacity-100 z-10"
-                    : "bg-white/10 hover:bg-white/18 border border-white/20 hover:border-white/50 shadow-[0_16px_36px_rgba(0,0,0,0.3)] z-10"
+                    ? "bg-white/06 border border-white/15 opacity-45 hover:opacity-100 z-10"
+                    : "bg-white/08 hover:bg-white/15 border border-white/20 hover:border-white/40 shadow-[0_16px_36px_rgba(0,0,0,0.3)] z-10"
                 }`}
                 style={{
                   transform: isActive
-                    ? "rotate(0deg) translateY(-14px) scale(1.1)"
-                    : `rotate(${cfg.rotationDeg}deg) translateY(${cfg.yOffsetPx}px)`,
-                  minWidth: "160px",
+                    ? "rotate(0deg) translateY(-14px) scale(1.08)"
+                    : `rotate(${char.rotationDeg}deg) translateY(${char.yOffsetPx}px)`,
+                  minWidth: "155px",
+                  maxWidth: "180px",
                 }}
               >
-                {/* Glowing Colored Ambient Backdrop */}
+                {/* Unified Ambient Brand Glow */}
                 <div
                   className="pointer-events-none absolute inset-0 rounded-3xl blur-xl transition-opacity duration-300 -z-10"
                   style={{
-                    background: `radial-gradient(circle at center, ${char.glowColor} 0%, transparent 75%)`,
-                    opacity: isActive ? 0.75 : 0,
+                    background: "radial-gradient(circle at center, rgba(111,209,121,0.35) 0%, transparent 75%)",
+                    opacity: isActive ? 0.8 : 0,
                   }}
                 />
 
-                {/* Character Illustration */}
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center mb-3">
+                {/* Character Illustration with Contrast Canvas */}
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center mb-3">
+                  <div className="absolute inset-0 rounded-full bg-white/12 border border-white/20 transition-all duration-300 group-hover:scale-105 group-hover:bg-white/18" />
                   <img
                     src={char.svg}
-                    alt={char.name}
-                    className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)] transition-transform duration-300 group-hover:scale-105"
+                    alt={`${char.name} (${char.animal})`}
+                    className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-110"
                     loading="lazy"
                   />
                 </div>
 
-                {/* Name & Role Badge */}
+                {/* Name & Title */}
                 <span
-                  className="text-base font-semibold text-white tracking-wide mb-1"
+                  className="text-base font-semibold text-white tracking-wide mb-0.5"
                   style={{ fontFamily: CD }}
                 >
                   {char.name}
                 </span>
 
-                <span
-                  className="text-[0.68rem] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: `${char.themeColor}25`,
-                    color: char.themeColor,
-                    border: `1px solid ${char.themeColor}45`,
-                  }}
-                >
-                  {char.role.split("&")[0].trim()}
+                <span className="text-xs text-white/80 font-medium mb-2">
+                  {char.title}
+                </span>
+
+                {/* Animal badge */}
+                <span className="text-[0.65rem] font-medium uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">
+                  {char.animal}
                 </span>
               </button>
 
@@ -197,29 +147,23 @@ export function FooterCharacters() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.94 }}
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    className={`absolute top-[calc(100%+16px)] z-50 w-[290px] sm:w-[320px] pointer-events-auto ${
+                    className={`absolute top-[calc(100%+14px)] z-50 w-[280px] sm:w-[310px] pointer-events-auto ${
                       index === 0
                         ? "left-0 sm:left-1/2 sm:-translate-x-1/2"
-                        : index === displayedConfig.length - 1
+                        : index === IDEAKICKS_CHARACTERS.length - 1
                         ? "right-0 sm:left-1/2 sm:-translate-x-1/2"
                         : "left-1/2 -translate-x-1/2"
                     }`}
                   >
                     <div
-                      className="relative rounded-2xl bg-[#06243E]/95 backdrop-blur-2xl border border-white/20 p-5 text-white shadow-[0_25px_60px_rgba(0,0,0,0.65)]"
+                      className="relative rounded-2xl bg-[#06243E]/95 backdrop-blur-2xl border border-white/20 p-5 text-white shadow-[0_25px_60px_rgba(0,0,0,0.7)]"
                       style={{
-                        boxShadow: `0 20px 50px -10px ${char.glowColor}, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                        boxShadow: "0 20px 50px -10px rgba(111,209,121,0.25), inset 0 1px 0 rgba(255,255,255,0.2)",
                       }}
                     >
                       {/* Caret pointing UP to the character */}
                       <div
                         className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#06243E] border-l border-t border-white/20 transform rotate-45"
-                      />
-
-                      {/* Top aura */}
-                      <div
-                        className="pointer-events-none absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-40"
-                        style={{ backgroundColor: char.themeColor }}
                       />
 
                       {/* Header */}
@@ -229,51 +173,32 @@ export function FooterCharacters() {
                             <h4 className="text-lg font-semibold text-white" style={{ fontFamily: CD }}>
                               {char.name}
                             </h4>
-                            <span
-                              className="text-[0.62rem] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full"
-                              style={{
-                                backgroundColor: `${char.themeColor}30`,
-                                color: char.themeColor,
-                              }}
-                            >
-                              {char.stats[0]?.value}
+                            <span className="text-[0.65rem] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#6FD179]/20 text-[#6FD179] border border-[#6FD179]/30">
+                              {char.animal}
                             </span>
                           </div>
-                          <p className="text-xs text-white/50">{char.codename}</p>
+                          <p className="text-xs text-white/60 font-medium">{char.title}</p>
                         </div>
 
-                        <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center p-1.5 border flex-shrink-0"
-                          style={{
-                            backgroundColor: `${char.themeColor}18`,
-                            borderColor: `${char.themeColor}40`,
-                          }}
-                        >
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center p-1.5 border border-white/15 bg-white/08 flex-shrink-0">
                           <img src={char.svg} alt={char.name} className="w-full h-full object-contain" />
                         </div>
                       </div>
 
-                      {/* Role & Quote */}
-                      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-white/70 mb-1">
-                        {char.role}
-                      </p>
-                      <p className="text-xs text-white/90 italic font-medium leading-snug mb-3">
+                      {/* Motto */}
+                      <p className="text-xs text-white/90 italic font-medium leading-snug mb-2.5">
                         "{char.tagline}"
                       </p>
 
                       {/* Narrative description */}
-                      <p className="text-xs leading-relaxed text-white/70 mb-3.5">
+                      <p className="text-xs leading-relaxed text-white/70 mb-4">
                         {char.bio}
                       </p>
 
                       {/* CTA link */}
                       <Link
                         to={char.link}
-                        className="inline-flex items-center justify-between w-full py-2 px-3.5 rounded-xl text-xs font-semibold transition-all duration-200 group/link"
-                        style={{
-                          backgroundColor: char.themeColor,
-                          color: char.id === "bee" || char.id === "eagle" ? "#082D4D" : "#FFFFFF",
-                        }}
+                        className="inline-flex items-center justify-between w-full py-2 px-3.5 rounded-xl text-xs font-semibold bg-[#6FD179] text-[#082D4D] hover:bg-[#5bc468] transition-all duration-200 group/link"
                       >
                         <span>{char.linkLabel}</span>
                         <ArrowRight size={13} weight="bold" className="transition-transform group-hover/link:translate-x-1" />
