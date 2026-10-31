@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { TwitterLogo, InstagramLogo, LinkedinLogo, YoutubeLogo } from "@phosphor-icons/react";
 import { Logo } from "./Logo";
 import { GradientCanvas } from "../common/GradientCanvas";
+import { FooterCharacters } from "./FooterCharacters";
 
 const CD = "'Clash Display', sans-serif";
 const SAT = "'Satoshi', sans-serif";
@@ -38,7 +39,7 @@ const SOCIAL = [
 export function Footer() {
 
   return (
-    <footer className="relative overflow-hidden bg-[#082D4D] pt-56 text-white md:pt-64" style={{ fontFamily: SAT }}>
+    <footer className="relative overflow-hidden bg-[#082D4D] pt-36 text-white md:pt-44" style={{ fontFamily: SAT }}>
       <div className="pointer-events-none absolute inset-0 z-0 opacity-95" aria-hidden="true">
         <GradientCanvas variant="footer" />
       </div>
@@ -60,7 +61,9 @@ export function Footer() {
       />
 
       {/* Main footer body */}
-      <div className="relative z-10 container-base pt-16 pb-12">
+      <div className="relative z-10 container-base pt-8 pb-16">
+        <FooterCharacters />
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-16">
 
           {/* Left: Brand block */}
