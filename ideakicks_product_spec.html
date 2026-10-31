@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ideakicks — Product Specifications & Architecture Document</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-900: #082D4D;
+    --navy-800: #0F4C82;
+    --navy-700: #1B5E99;
+    --navy-100: #EBF4FC;
+    --navy-50: #F4F8FC;
+    --green-500: #6FD179;
+    --green-600: #48B854;
+    --green-100: #E6F8E8;
+    --green-50: #F2FCF3;
+    --slate-900: #0F172A;
+    --slate-700: #334155;
+    --slate-500: #64748B;
+    --slate-400: #94A3B8;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50: #F8FAFC;
+    --white: #FFFFFF;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm 12mm 14mm;
+    @bottom-right {
+      content: "Page " counter(page);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 8pt;
+      color: #94A3B8;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--slate-900);
+    background: var(--white);
+    line-height: 1.4;
+    font-size: 8.8pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4 {
+    color: var(--navy-900);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  h1 { font-size: 26pt; line-height: 1.15; }
+  h2 { font-size: 14.5pt; line-height: 1.25; margin-bottom: 5pt; }
+  h3 { font-size: 10.5pt; line-height: 1.3; margin-bottom: 4pt; }
+  h4 { font-size: 9pt; line-height: 1.3; margin-bottom: 2pt; }
+
+  p { margin-bottom: 4pt; color: var(--slate-700); }
+  p.lead { font-size: 10pt; color: var(--slate-700); line-height: 1.45; margin-bottom: 6pt; }
+
+  code, .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.8pt;
+    background: var(--slate-100);
+    padding: 1pt 3.5pt;
+    border-radius: 4px;
+    color: var(--navy-800);
+  }
+
+  /* Layout helpers */
+  .page {
+    page-break-after: always;
+    break-after: page;
+    position: relative;
+    padding: 0;
+  }
+  .page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .section-header {
+    border-bottom: 2px solid var(--navy-900);
+    padding-bottom: 5pt;
+    margin-bottom: 8pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .section-header .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.2pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--green-600);
+    background: var(--green-100);
+    padding: 2pt 6.5pt;
+    border-radius: 999px;
+  }
+
+  /* Cover Page */
+  .cover-container {
+    height: 100%;
+    min-height: 260mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18mm 10mm 14mm 10mm;
+    background: radial-gradient(circle at 90% 10%, rgba(111, 209, 121, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 10% 90%, rgba(15, 76, 130, 0.08) 0%, transparent 50%),
+                var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: 12px;
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--slate-200);
+    padding-bottom: 14pt;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 8pt;
+  }
+  .brand-logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--navy-900);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--green-500);
+    font-weight: 800;
+    font-size: 16pt;
+  }
+  .brand-name {
+    font-size: 18pt;
+    font-weight: 800;
+    color: var(--navy-900);
+    letter-spacing: -0.03em;
+  }
+  .brand-name span { color: var(--green-600); }
+
+  .doc-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    background: var(--navy-100);
+    color: var(--navy-800);
+    padding: 3.5pt 9pt;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .cover-body {
+    margin: 32pt 0;
+  }
+  .cover-subtitle {
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--green-600);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8pt;
+  }
+  .cover-title {
+    font-size: 30pt;
+    line-height: 1.1;
+    color: var(--navy-900);
+    margin-bottom: 14pt;
+    font-weight: 800;
+  }
+  .cover-desc {
+    font-size: 11pt;
+    color: var(--slate-500);
+    max-width: 520px;
+    line-height: 1.55;
+    margin-bottom: 22pt;
+  }
+
+  .cover-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10pt;
+    padding: 14pt;
+    background: var(--slate-50);
+    border-radius: 10px;
+    border: 1px solid var(--slate-200);
+  }
+  .spec-item .spec-label {
+    font-size: 7.5pt;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--slate-400);
+    text-transform: uppercase;
+    margin-bottom: 2pt;
+  }
+  .spec-item .spec-val {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: var(--navy-900);
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid var(--slate-200);
+    padding-top: 14pt;
+    font-size: 7.5pt;
+    color: var(--slate-400);
+  }
+
+  /* Grid & Cards */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9pt;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 7pt;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: 6px;
+    padding: 7pt 9pt;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .card-highlight {
+    background: var(--navy-50);
+    border-color: rgba(15, 76, 130, 0.2);
+  }
+
+  .card-title {
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--navy-900);
+    margin-bottom: 2.5pt;
+    display: flex;
+    align-items: center;
+    gap: 4pt;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7.4pt;
+    margin-bottom: 5pt;
+  }
+  th {
+    background: var(--navy-900);
+    color: var(--white);
+    text-align: left;
+    padding: 3.8pt 6pt;
+    font-weight: 600;
+    font-size: 7.2pt;
+    letter-spacing: 0.02em;
+  }
+  th:first-child { border-top-left-radius: 5px; }
+  th:last-child { border-top-right-radius: 5px; }
+  td {
+    padding: 3.4pt 6pt;
+    border-bottom: 1px solid var(--slate-200);
+    color: var(--slate-700);
+    vertical-align: middle;
+  }
+  tr:nth-child(even) td {
+    background: var(--slate-50);
+  }
+
+  /* Badges & Pills */
+  .badge {
+    display: inline-block;
+    padding: 1pt 4.5pt;
+    border-radius: 999px;
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .badge-navy { background: var(--navy-100); color: var(--navy-800); }
+  .badge-green { background: var(--green-100); color: var(--green-600); }
+  .badge-slate { background: var(--slate-100); color: var(--slate-700); }
+
+  /* Frame Box / Mockup */
+  .frame-box {
+    border: 1.2px solid var(--slate-200);
+    border-radius: 6px;
+    background: var(--white);
+    overflow: hidden;
+    margin-bottom: 6pt;
+    box-shadow: 0 1px 3px rgba(8, 45, 77, 0.03);
+  }
+  .frame-header {
+    background: var(--slate-100);
+    padding: 3.5pt 7pt;
+    border-bottom: 1px solid var(--slate-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7pt;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--slate-500);
+  }
+  .frame-dots {
+    display: flex;
+    gap: 2.5pt;
+  }
+  .frame-dot {
+    width: 4.5pt;
+    height: 4.5pt;
+    border-radius: 50%;
+    background: var(--slate-400);
+  }
+  .frame-content {
+    padding: 7pt 9pt;
+  }
+
+  /* Flow Steps */
+  .flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5pt;
+    margin: 5pt 0;
+  }
+  .flow-node {
+    display: flex;
+    align-items: flex-start;
+    gap: 7pt;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 6px;
+    padding: 5.5pt 7pt;
+  }
+  .flow-step-num {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--navy-900);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7pt;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .flow-step-num.green {
+    background: var(--green-500);
+    color: var(--navy-900);
+  }
+  .flow-content {
+    flex: 1;
+  }
+  .flow-content h4 {
+    margin-bottom: 1pt;
+    font-size: 8.8pt;
+  }
+  .flow-content p {
+    font-size: 7.5pt;
+    color: var(--slate-500);
+    margin: 0;
+  }
+
+  .diagram-wrapper {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 6px;
+    padding: 6pt 5pt;
+    margin-bottom: 6pt;
+    text-align: center;
+  }
+  .diagram-wrapper svg {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     PAGE 1: COVER PAGE
+========================================== -->
+<div class="page">
+  <div class="cover-container">
+    <div class="cover-top">
+      <div class="brand-logo">
+        <div class="brand-logo-mark">i</div>
+        <div class="brand-name">ideakicks<span>.</span></div>
+      </div>
+      <div class="doc-badge">ARCH-SPEC-2026.V4</div>
+    </div>
+
+    <div class="cover-body">
+      <div class="cover-subtitle">Product Architecture & UX Specification</div>
+      <h1 class="cover-title">Platform Requirements, Information Architecture & User Flows</h1>
+      <p class="cover-desc">
+        A comprehensive design and engineering specification detailing the Information Architecture, Onboarding Wireframe Breakdowns, End-to-End User Journeys, and Complete Feature Sitemap for ideakicks.
+      </p>
+
+      <div class="cover-specs-grid">
+        <div class="spec-item">
+          <div class="spec-label">Document Version</div>
+          <div class="spec-val">v4.0 (MVP Release)</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Primary Color</div>
+          <div class="spec-val">#082D4D / #6FD179</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Core Personas</div>
+          <div class="spec-val">Creator, Backer, Partner</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Document Date</div>
+          <div class="spec-val">September 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div>ideakicks, Unipessoal Lda · Lisbon, Portugal · Confidential & Proprietary</div>
+      <div>Engineered for Engineering & Product Alignment</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 2: SECTION 1 - INFORMATION ARCHITECTURE
+========================================== -->
+<div class="page">
+  <div class="section-header">
+    <div>
+      <h2>1. Detailed Information Architecture (IA)</h2>
+      <p style="margin:0; font-size: 7.8pt; color: var(--slate-500);">Structural taxonomy, global navigation hierarchy, and entity relationships</p>
+    </div>
+    <div class="tag">System IA</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom: 6pt;">
+    <div class="card card-highlight">
+      <div class="card-title">1.1 IA Architectural Principles</div>
+      <ul style="padding-left: 10pt; font-size: 7.5pt; color: var(--slate-700); line-height: 1.5;">
+        <li><strong>Persona-Centric Partitioning:</strong> Clean division between Creator (supply), Backer (demand), and Partner (ecosystem) paths.</li>
+        <li><strong>Flattened Navigation Depth:</strong> Critical account actions (Sign out, Settings) accessible in ≤1 click from any route via global header.</li>
+        <li><strong>Predictable Entity Hierarchy:</strong> Category → Campaign → Reward Tier → Backer Pledge → Fulfillment Updates.</li>
+        <li><strong>Transparent Legal & Financials:</strong> Unified zero-surprises pricing (5% platform fee) accessible across all entry funnels.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">1.2 Global Site Navigation Hierarchy</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: var(--navy-800); line-height: 1.4;">
+        / (Home — Persona Portals & Curated Showcase)<br>
+        ├── /explore (Browse, Search, Filter, Categories)<br>
+        ├── /start (Creator Landing Page & Value Props)<br>
+        │&nbsp;&nbsp;&nbsp;└── /start/application (4-Step Project Wizard)<br>
+        ├── /backers (Backer Discovery & Protection)<br>
+        ├── /vendors (Partner Ecosystem & Inquiries)<br>
+        ├── /campaign/:id (Campaign View, Rewards & Updates)<br>
+        │&nbsp;&nbsp;&nbsp;└── /campaign/:id/back (Backing & Checkout)<br>
+        ├── /dashboard (Overview, Backed, Saved, Campaigns)<br>
+        │&nbsp;&nbsp;&nbsp;└── #settings (Account & Security Center)<br>
+        └── /creator-studio/:id (Creator Management Suite)
+      </div>
+    </div>
+  </div>
+
+  <h3>1.3 Content Model & Entity Relationships</h3>
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 720 135" width="100%" height="135">
+      <!-- Entity 1: User -->
+      <g transform="translate(10, 8)">
+        <rect width="145" height="118" rx="6" fill="#FFFFFF" stroke="#082D4D" stroke-width="1.3"/>
+        <rect width="145" height="22" rx="6" fill="#082D4D"/>
+        <rect width="145" height="6" y="16" fill="#082D4D"/>
+        <text x="72" y="15" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="9.5" text-anchor="middle">USER / CREATOR</text>
+        <text x="10" y="40" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• user_id (PK)</text>
+        <text x="10" y="55" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• email & password_hash</text>
+        <text x="10" y="70" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• role: creator|backer|vendor</text>
+        <text x="10" y="85" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• stripe_connected_id</text>
+        <text x="10" y="100" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• kyc_verified: boolean</text>
+      </g>
+
+      <!-- Arrow 1 to 2 -->
+      <path d="M 155 67 L 185 67" stroke="#0F4C82" stroke-width="1.5"/>
+      <text x="170" y="61" fill="#64748B" font-family="'JetBrains Mono', monospace" font-size="7.5" text-anchor="middle">1:N</text>
+
+      <!-- Entity 2: Campaign -->
+      <g transform="translate(185, 8)">
+        <rect width="165" height="118" rx="6" fill="#FFFFFF" stroke="#0F4C82" stroke-width="1.3"/>
+        <rect width="165" height="22" rx="6" fill="#0F4C82"/>
+        <rect width="165" height="6" y="16" fill="#0F4C82"/>
+        <text x="82" y="15" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="9.5" text-anchor="middle">CAMPAIGN ENTITY</text>
+        <text x="10" y="40" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• campaign_id (PK)</text>
+        <text x="10" y="55" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• creator_id (FK)</text>
+        <text x="10" y="70" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• title & story_html</text>
+        <text x="10" y="85" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• goal_amount & currency</text>
+        <text x="10" y="100" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• status: draft|active|funded</text>
+      </g>
+
+      <!-- Arrow 2 to 3 -->
+      <path d="M 350 67 L 380 67" stroke="#0F4C82" stroke-width="1.5"/>
+      <text x="365" y="61" fill="#64748B" font-family="'JetBrains Mono', monospace" font-size="7.5" text-anchor="middle">1:N</text>
+
+      <!-- Entity 3: Reward / Perk -->
+      <g transform="translate(380, 8)">
+        <rect width="150" height="118" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="1.3"/>
+        <rect width="150" height="22" rx="6" fill="#334155"/>
+        <rect width="150" height="6" y="16" fill="#334155"/>
+        <text x="75" y="15" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="9.5" text-anchor="middle">REWARD PERK</text>
+        <text x="10" y="40" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• perk_id (PK)</text>
+        <text x="10" y="55" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• campaign_id (FK)</text>
+        <text x="10" y="70" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• pledge_amount</text>
+        <text x="10" y="85" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• est_delivery_month</text>
+        <text x="10" y="100" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• quantity_available</text>
+      </g>
+
+      <!-- Arrow 3 to 4 -->
+      <path d="M 530 67 L 560 67" stroke="#0F4C82" stroke-width="1.5"/>
+      <text x="545" y="61" fill="#64748B" font-family="'JetBrains Mono', monospace" font-size="7.5" text-anchor="middle">1:N</text>
+
+      <!-- Entity 4: Pledge -->
+      <g transform="translate(560, 8)">
+        <rect width="150" height="118" rx="6" fill="#FFFFFF" stroke="#48B854" stroke-width="1.3"/>
+        <rect width="150" height="22" rx="6" fill="#48B854"/>
+        <rect width="150" height="6" y="16" fill="#48B854"/>
+        <text x="75" y="15" fill="#082D4D" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="9.5" text-anchor="middle">BACKER PLEDGE</text>
+        <text x="10" y="40" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• pledge_id (PK)</text>
+        <text x="10" y="55" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• backer_user_id (FK)</text>
+        <text x="10" y="70" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• perk_id (FK)</text>
+        <text x="10" y="85" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• payment_status</text>
+        <text x="10" y="100" fill="#334155" font-family="'JetBrains Mono', monospace" font-size="7.8">• created_at</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>1.4 Category & Project Taxonomy</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Primary Category</th>
+        <th style="width: 45%;">Subcategories & Topic Clusters</th>
+        <th style="width: 30%;">Vetting Criteria & Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Technology & Hardware</strong></td>
+        <td>Consumer Electronics, Audio/IoT, Clean Tech, Robotics, Dev Tools</td>
+        <td>Working functional prototype required; Bill of Materials review</td>
+      </tr>
+      <tr>
+        <td><strong>Design & Craft</strong></td>
+        <td>Industrial Design, Everyday Carry (EDC), Ceramics, Furniture, Minimal Goods</td>
+        <td>Sample run feasibility; supplier quotes validated</td>
+      </tr>
+      <tr>
+        <td><strong>Games & Interactive</strong></td>
+        <td>Tabletop/Board Games, Indie Video Games, VR/AR, Game Accessories</td>
+        <td>Playtest video demo; rulebook draft & art completion</td>
+      </tr>
+      <tr>
+        <td><strong>Film & Publishing</strong></td>
+        <td>Documentary, Narrative Shorts, Independent Books, Graphic Novels</td>
+        <td>Script/manuscript completion; production budget breakdown</td>
+      </tr>
+      <tr>
+        <td><strong>Sustainability & Social</strong></td>
+        <td>Water Purification, Zero Waste, Community Gardens, Circular Economy</td>
+        <td>Impact audit; verifiable certifications or lab testing</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==========================================
+     PAGE 3: SECTION 2 - ONBOARDING FLOW FRAMES
+========================================== -->
+<div class="page">
+  <div class="section-header">
+    <div>
+      <h2>2. Onboarding Flow Frames: Creator Project Wizard</h2>
+      <p style="margin:0; font-size: 7.8pt; color: var(--slate-500);">Interactive step frames for <code class="mono">/start/application</code> onboarding funnel</p>
+    </div>
+    <div class="tag">Creator Funnel</div>
+  </div>
+
+  <p class="lead">
+    The Creator Application Wizard chunks complex crowdfunding setup into 4 progressive, state-validated stages to maximize launch readiness and regulatory compliance.
+  </p>
+
+  <div class="grid-2">
+    <!-- Frame 1 -->
+    <div class="frame-box">
+      <div class="frame-header">
+        <div class="frame-dots">
+          <div class="frame-dot"></div><div class="frame-dot"></div><div class="frame-dot"></div>
+        </div>
+        <div>FRAME 01 · PLAN & SET UP</div>
+      </div>
+      <div class="frame-content">
+        <h4 style="color: var(--navy-900);">Step 1: Creator Legal & Banking Setup</h4>
+        <p style="font-size: 7.5pt; color: var(--slate-500); margin-bottom: 5pt;">Establishes compliance and verifies identity before page creation.</p>
+        
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt; margin-bottom: 4.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">ELIGIBILITY GATES</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">☑ Age verification (18+ confirmed)</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">☑ Supported jurisdiction residency</div>
+        </div>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt; margin-bottom: 4.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">IDENTITY & PAYOUT VERIFICATION</div>
+          <div style="font-size: 7pt; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5pt;">
+            <span>Government ID Upload</span>
+            <span class="badge badge-green">VERIFIED</span>
+          </div>
+          <div style="font-size: 7pt; display: flex; justify-content: space-between; align-items: center;">
+            <span>Bank Payout Account</span>
+            <span class="badge badge-green">LINKED</span>
+          </div>
+        </div>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 1pt;">PROJECT TAXONOMY</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">Category: Technology & Hardware → IoT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frame 2 -->
+    <div class="frame-box">
+      <div class="frame-header">
+        <div class="frame-dots">
+          <div class="frame-dot"></div><div class="frame-dot"></div><div class="frame-dot"></div>
+        </div>
+        <div>FRAME 02 · BUILD CAMPAIGN</div>
+      </div>
+      <div class="frame-content">
+        <h4 style="color: var(--navy-900);">Step 2: Campaign Page & Reward Tiers</h4>
+        <p style="font-size: 7.5pt; color: var(--slate-500); margin-bottom: 5pt;">Rich content builder with instant preview validation.</p>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt; margin-bottom: 4.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">CORE CAMPAIGN ASSETS</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">• Title & Pitch headline (max 90 chars)</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">• Hero Image / Video link (16:9 ratio)</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">• Funding Goal (Flexible: Keep what you raise)</div>
+        </div>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">TIERED REWARDS CONFIGURATOR</div>
+          <div style="font-size: 7pt; border-left: 2px solid var(--green-500); padding-left: 4pt; margin-bottom: 2.5pt;">
+            <strong>Early Backer Kit</strong> — ₹149 (Est. Dec 2026)<br>
+            Includes prototype hardware, field guide, worldwide shipping
+          </div>
+          <div style="font-size: 7pt; border-left: 2px solid var(--navy-800); padding-left: 4pt;">
+            <strong>Founder Edition</strong> — ₹299 (Est. Dec 2026)<br>
+            Includes custom engraving, direct creator Discord channel
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Frame 3 -->
+    <div class="frame-box">
+      <div class="frame-header">
+        <div class="frame-dots">
+          <div class="frame-dot"></div><div class="frame-dot"></div><div class="frame-dot"></div>
+        </div>
+        <div>FRAME 03 · REVIEW & SUBMIT</div>
+      </div>
+      <div class="frame-content">
+        <h4 style="color: var(--navy-900);">Step 3: Pre-Launch Audit & Stripe Connect</h4>
+        <p style="font-size: 7.5pt; color: var(--slate-500); margin-bottom: 5pt;">System checks, coaching assignment & editorial submission.</p>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt; margin-bottom: 4.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">PAYMENT ESCROW SYSTEM</div>
+          <div style="font-size: 7pt; display: flex; justify-content: space-between; align-items: center;">
+            <span>Stripe Connect Integration</span>
+            <span class="badge badge-green">ACTIVE ESCROW</span>
+          </div>
+        </div>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt; margin-bottom: 3pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">PRE-LAUNCH CHECKLIST (4/4 COMPLETE)</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">✔ Verified legal entity & phone number</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">✔ High-resolution hero media uploaded</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">✔ At least 1 reward tier configured with delivery date</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">✔ Transparent risk & challenge disclosures</div>
+        </div>
+        
+        <div style="font-size: 6.8pt; color: var(--slate-500); font-style: italic;">
+          Review turnaround: 48 hours guaranteed by dedicated human coach.
+        </div>
+      </div>
+    </div>
+
+    <!-- Frame 4 -->
+    <div class="frame-box">
+      <div class="frame-header">
+        <div class="frame-dots">
+          <div class="frame-dot"></div><div class="frame-dot"></div><div class="frame-dot"></div>
+        </div>
+        <div>FRAME 04 · LAUNCH & PROMOTE</div>
+      </div>
+      <div class="frame-content">
+        <h4 style="color: var(--navy-900);">Step 4: Launch Approval & Community Sharing</h4>
+        <p style="font-size: 7.5pt; color: var(--slate-500); margin-bottom: 5pt;">Private draft previews, pre-launch followers & launch trigger.</p>
+
+        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 5px; padding: 4.5pt 6.5pt; margin-bottom: 4.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-800); margin-bottom: 2pt;">PRIVATE PREVIEW URL GENERATOR</div>
+          <div style="font-size: 6.8pt; font-family: 'JetBrains Mono', monospace; color: var(--navy-800); background: #FFF; padding: 2pt 4pt; border: 1px solid var(--slate-200); border-radius: 4px;">
+            https://ideakicks.com/projects/ether-keyboard?token=draft_preview
+          </div>
+          <div style="font-size: 6.5pt; color: var(--slate-400); margin-top: 1.5pt;">Shareable to mentors, beta testers and private backers.</div>
+        </div>
+
+        <div style="background: var(--green-50); border: 1px solid rgba(111,209,121,0.4); border-radius: 5px; padding: 4.5pt 6.5pt;">
+          <div style="font-size: 7pt; font-weight: 700; color: var(--navy-900); margin-bottom: 1pt;">EDITORIAL FEEDBACK RECEIVED</div>
+          <div style="font-size: 7pt; color: var(--slate-700);">
+            "Campaign approved for Public Launch. Coach assigned: Marcus Vance (Hardware lead)."
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 3pt;">2.2 User Account Onboarding (<code class="mono">/onboarding</code>)</h3>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Frame A: Persona Intent</div>
+      <p style="font-size: 7.5pt; color: var(--slate-500);">Interactive card selector: <strong>Creator</strong> (raising funds), <strong>Backer</strong> (discovering projects), or <strong>Vendor/Partner</strong> (offering manufacturing/services).</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Frame B: Interest Clusters</div>
+      <p style="font-size: 7.5pt; color: var(--slate-500);">Multi-select tags across 12 sectors (Technology, Design, Games, Sustainability, Film, etc.) to customize dashboard feed.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Frame C: Profile & Handle</div>
+      <p style="font-size: 7.5pt; color: var(--slate-500);">Sets display name, public @handle, bio, and avatar. Synchronizes instant redirection to personalized dashboard state.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 4: SECTION 3 - END-TO-END USER FLOWS
+========================================== -->
+<div class="page">
+  <div class="section-header">
+    <div>
+      <h2>3. End-to-End User Flows</h2>
+      <p style="margin:0; font-size: 7.8pt; color: var(--slate-500);">Step-by-step logic maps for core platform personas</p>
+    </div>
+    <div class="tag">User Journeys</div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Flow 1: Creator Journey -->
+    <div>
+      <h3>Flow 1: The Creator Journey (Ideation to Payout)</h3>
+      <div class="flow-container">
+        <div class="flow-node">
+          <div class="flow-step-num">1</div>
+          <div class="flow-content">
+            <h4>Discovery & Value Proposition</h4>
+            <p>Creator lands on <code class="mono">/start</code>, reviews flexible funding model (keep what you raise) and 5% platform fee.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num">2</div>
+          <div class="flow-content">
+            <h4>Wizard Application (<code class="mono">/start/application</code>)</h4>
+            <p>Completes 4-step wizard: ID verification, media upload, funding target, and tier rewards definition.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num">3</div>
+          <div class="flow-content">
+            <h4>Human Review & Coaching (<48h)</h4>
+            <p>Editorial team reviews feasibility; 1-on-1 coach assigned to polish story, marketing, and reward pricing.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num green">4</div>
+          <div class="flow-content">
+            <h4>Public Launch & Campaign Operations</h4>
+            <p>Project goes live on <code class="mono">/explore</code>. Creator manages backers, comments, and updates inside <code class="mono">/creator-studio/:id</code>.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num green">5</div>
+          <div class="flow-content">
+            <h4>Campaign Close & Stripe Escrow Release</h4>
+            <p>Funds transferred via Stripe Connect. Creator sends regular manufacturing updates to backers until rewards delivered.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow 2: Backer Journey -->
+    <div>
+      <h3>Flow 2: The Backer Journey (Discovery to Fulfillment)</h3>
+      <div class="flow-container">
+        <div class="flow-node">
+          <div class="flow-step-num">1</div>
+          <div class="flow-content">
+            <h4>Discovery & Filtering</h4>
+            <p>Backer navigates <code class="mono">/explore</code>; searches by keyword, category, funding status, or "Ending Soon" urgency.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num">2</div>
+          <div class="flow-content">
+            <h4>Evaluation on Campaign Page (<code class="mono">/campaign/:id</code>)</h4>
+            <p>Reviews video pitch, creator credentials, prototype demos, estimated delivery dates, and transparent risk statements.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num">3</div>
+          <div class="flow-content">
+            <h4>Pledge & Flexible Checkout (<code class="mono">/campaign/:id/back</code>)</h4>
+            <p>Selects preferred reward tier; enters shipping destination and payment credentials. Order summary includes taxes & shipping.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num green">4</div>
+          <div class="flow-content">
+            <h4>Confirmation & Dashboard Tracking</h4>
+            <p>Receipt sent to email; project automatically populated into user's <code class="mono">/dashboard</code> under "Backed Projects" tab.</p>
+          </div>
+        </div>
+        <div class="flow-node">
+          <div class="flow-step-num green">5</div>
+          <div class="flow-content">
+            <h4>Reward Fulfillment & Creator Updates</h4>
+            <p>Receives notifications for manufacturing milestones, production photos, tracking numbers, and delivery confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 6pt;">
+    <!-- Flow 3: Partner / Vendor Ecosystem Flow -->
+    <div class="card">
+      <div class="card-title">Flow 3: Partner & Vendor Ecosystem Flow</div>
+      <ol style="padding-left: 10pt; font-size: 7.5pt; color: var(--slate-700); line-height: 1.5;">
+        <li><strong>Ecosystem Landing:</strong> Service provider views <code class="mono">/vendors</code> to explore partnership benefits (manufacturing, fulfillment, legal, hardware prototyping).</li>
+        <li><strong>Inquiry Submission:</strong> Submits capability profile, factory certifications, minimum order quantities (MOQs), and client references.</li>
+        <li><strong>Verification Audit:</strong> Ideakicks team vets business standing and quality guarantees.</li>
+        <li><strong>Directory Listing:</strong> Verified partner added to internal roster; matched directly with creators needing execution help.</li>
+      </ol>
+    </div>
+
+    <!-- Flow 4: Account & Security Management -->
+    <div class="card">
+      <div class="card-title">Flow 4: Account & Security Management (Header UX)</div>
+      <ol style="padding-left: 10pt; font-size: 7.5pt; color: var(--slate-700); line-height: 1.5;">
+        <li><strong>Global Accessibility:</strong> User profile icon in header displays instant modal menu on click.</li>
+        <li><strong>One-Click Sign Out:</strong> Direct sign-out button eliminates nested navigation depth.</li>
+        <li><strong>Direct Settings Routing:</strong> Clicking "Settings" links to <code class="mono">/dashboard#settings</code>, auto-activating the settings tab.</li>
+        <li><strong>Profile & Security:</strong> Update bio, change notification frequencies, or export backer data with zero friction.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 5: SECTION 4 - COMPLETE FEATURE SITEMAP
+========================================== -->
+<div class="page">
+  <div class="section-header">
+    <div>
+      <h2>4. Comprehensive Feature Sitemap</h2>
+      <p style="margin:0; font-size: 7.8pt; color: var(--slate-500);">Full inventory of public, authenticated, creator, and legal endpoints</p>
+    </div>
+    <div class="tag">System Sitemap</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 22%;">Route URL</th>
+        <th style="width: 17%;">Page Title</th>
+        <th style="width: 13%;">Access Level</th>
+        <th style="width: 32%;">Primary Features & Components</th>
+        <th style="width: 16%;">Primary CTA</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="mono">/</code></td>
+        <td>Home</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Hero canvas, 3-path persona grid, curated projects carousel, GlobalCTA</td>
+        <td>"Explore Projects"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/explore</code></td>
+        <td>Explore Campaigns</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Category filter pills, live search bar, sorting (popular/newest), project cards</td>
+        <td>"Back this project"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/campaign/:id</code></td>
+        <td>Campaign Details</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Hero video/photo, funding meter, story tab, perks sidebar, updates feed</td>
+        <td>"Back Campaign"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/campaign/:id/back</code></td>
+        <td>Back Campaign</td>
+        <td><span class="badge badge-navy">Auth / Guest</span></td>
+        <td>Perk selector, pledge customizer, shipping address form, payment gateway</td>
+        <td>"Confirm & Pledge"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/campaign/:id/updates</code></td>
+        <td>Campaign Updates</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Chronological creator journal, manufacturing milestones, backer comments</td>
+        <td>"Post Comment"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/start</code></td>
+        <td>For Creators Landing</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>3 starting stages breakdown, perks grid, 4-step launch timeline, FAQ accordion</td>
+        <td>"Start Application"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/start/application</code></td>
+        <td>Project Wizard</td>
+        <td><span class="badge badge-green">Creator Auth</span></td>
+        <td>4-stage wizard: KYC setup, campaign page builder, reward tiers, Stripe escrow</td>
+        <td>"Submit Campaign"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/creator-studio/:id</code></td>
+        <td>Creator Studio Suite</td>
+        <td><span class="badge badge-green">Creator Auth</span></td>
+        <td>Real-time pledge analytics, backer roster CSV export, update publisher, editor</td>
+        <td>"Publish Update"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/dashboard</code></td>
+        <td>User Dashboard</td>
+        <td><span class="badge badge-navy">Auth Required</span></td>
+        <td>Overview stats, Backed Projects tab, Saved/Bookmarks tab, My Campaigns tab</td>
+        <td>"Discover More"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/dashboard#settings</code></td>
+        <td>Account Settings</td>
+        <td><span class="badge badge-navy">Auth Required</span></td>
+        <td>Profile photo & handle editor, email preferences, notifications, Sign Out</td>
+        <td>"Save Changes"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/backers</code></td>
+        <td>For Backers Landing</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Backer protection policies, curated selection process, backer testimonials</td>
+        <td>"Explore Projects"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/vendors</code></td>
+        <td>Partner & Vendor Hub</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Directory of approved manufacturing & marketing partners, inquiry lead form</td>
+        <td>"Apply as Partner"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/how-it-works</code></td>
+        <td>How It Works</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Detailed breakdown of the ideakicks ecosystem, vetting process, and fees</td>
+        <td>"Start a Project"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/pricing</code></td>
+        <td>Pricing & Fees</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Transparent fee breakdown: 5% platform fee, 3%+₹0.30 processing, zero upfront</td>
+        <td>"Get Started"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/success-stories</code></td>
+        <td>Success Stories</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Case studies of funded hardware, design, and software creator campaigns</td>
+        <td>"Launch Yours"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/about</code></td>
+        <td>About Us</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Company mission, curation ethos, human-reviewed guarantee, team narrative</td>
+        <td>"Contact Team"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/contact</code></td>
+        <td>Contact & Support</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Direct contact form for support, enterprise inquiries, mentor partnerships</td>
+        <td>"Send Message"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/login</code> & <code class="mono">/signup</code></td>
+        <td>Auth Modals / Pages</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Email/password auth, Google OAuth, password recovery, session handling</td>
+        <td>"Sign In / Up"</td>
+      </tr>
+      <tr>
+        <td><code class="mono">/legal</code></td>
+        <td>Legal & Compliance</td>
+        <td><span class="badge badge-slate">Public</span></td>
+        <td>Terms of Service, Privacy Policy (GDPR compliant), Cookies, Accessibility</td>
+        <td>"Review Terms"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-highlight" style="margin-top: 6pt; padding: 6pt 9pt;">
+    <div class="card-title">Document Approval & Release Notes</div>
+    <div class="grid-3" style="font-size: 7.4pt; color: var(--slate-700); margin-top: 2pt;">
+      <div><strong>Status:</strong> Approved for Production Release</div>
+      <div><strong>System Compliance:</strong> Design System v2.4 (Tailwind v4)</div>
+      <div><strong>Target Platforms:</strong> Responsive Web (Desktop & Mobile)</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

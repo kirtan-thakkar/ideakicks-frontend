@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ideakicks - Product Architecture & UX Specification</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  @page {
+    size: A4 portrait;
+    margin: 14mm 16mm 16mm 16mm;
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 8pt;
+      color: #64748b;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0f172a;
+    background: #ffffff;
+    line-height: 1.5;
+    font-size: 9.5pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    page-break-after: always;
+    position: relative;
+    min-height: 260mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page:last-child {
+    page-break-after: avoid;
+  }
+
+  /* Header and Footer for Pages */
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+  }
+  .doc-header .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 11pt;
+    color: #082D4D;
+    letter-spacing: -0.02em;
+  }
+  .doc-header .logo-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6FD179;
+    display: inline-block;
+  }
+  .doc-header .meta-tag {
+    font-size: 7.5pt;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .doc-footer {
+    margin-top: auto;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.5pt;
+    color: #94a3b8;
+  }
+
+  /* Headings */
+  h1.doc-title {
+    font-size: 24pt;
+    font-weight: 800;
+    color: #082D4D;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  h2.section-title {
+    font-size: 14pt;
+    font-weight: 800;
+    color: #082D4D;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-tag {
+    display: inline-block;
+    background: rgba(111,209,121,0.18);
+    color: #15803d;
+    font-size: 7pt;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .section-desc {
+    font-size: 8.5pt;
+    color: #475569;
+    margin-bottom: 14px;
+    line-height: 1.45;
+  }
+
+  h3.sub-title {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #0F4C82;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Cards & Containers */
+  .card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .card-slate {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+  .card-navy {
+    background: #082D4D;
+    color: #ffffff;
+    border: none;
+  }
+
+  /* Grid Utilities */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* Tables */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8pt;
+    margin-bottom: 12px;
+  }
+  table.data-table th {
+    background: #f1f5f9;
+    color: #082D4D;
+    font-weight: 700;
+    text-align: left;
+    padding: 7px 9px;
+    border: 1px solid #e2e8f0;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  table.data-table td {
+    padding: 6.5px 9px;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    vertical-align: top;
+  }
+  table.data-table tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 6.8pt;
+    font-weight: 700;
+  }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-blue { background: #e0f2fe; color: #0369a1; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; }
+  .badge-gray { background: #f1f5f9; color: #475569; }
+
+  /* Wireframe / Screen Mockup Boxes */
+  .frame-container {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .frame-topbar {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .frame-dots {
+    display: flex;
+    gap: 4px;
+  }
+  .frame-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #cbd5e1;
+  }
+  .frame-title {
+    font-size: 7pt;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .frame-body {
+    padding: 10px;
+    background: #ffffff;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 7.5pt;
+  }
+
+  .ui-input {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 7pt;
+    color: #64748b;
+  }
+  .ui-btn {
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 7pt;
+    font-weight: 700;
+    text-align: center;
+    display: block;
+  }
+  .ui-btn-primary { background: #0F4C82; color: #ffffff; }
+  .ui-btn-green { background: #6FD179; color: #082D4D; }
+  .ui-btn-outline { border: 1px solid #cbd5e1; color: #475569; }
+
+  /* Flow Nodes */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .flow-box {
+    background: #ffffff;
+    border: 1.5px solid #0F4C82;
+    border-radius: 6px;
+    padding: 7px 9px;
+    flex: 1;
+    font-size: 7.5pt;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .flow-box.decision {
+    border-color: #d97706;
+    background: #fffbeb;
+  }
+  .flow-box.success {
+    border-color: #16a34a;
+    background: #f0fdf4;
+  }
+  .flow-arrow {
+    color: #94a3b8;
+    font-weight: 800;
+    font-size: 10pt;
+    flex-shrink: 0;
+  }
+
+  /* Tree Diagram */
+  .tree-node {
+    border-left: 2px solid #cbd5e1;
+    padding-left: 10px;
+    margin-left: 8px;
+    margin-bottom: 6px;
+  }
+  .tree-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 8pt;
+    padding: 2px 0;
+  }
+  .tree-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 6.8pt;
+    background: #e2e8f0;
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  /* Cover Specifics */
+  .cover-hero {
+    background: linear-gradient(135deg, #082D4D 0%, #0c3b64 50%, #0F4C82 100%);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover-hero::after {
+    content: "";
+    position: absolute;
+    right: -40px;
+    bottom: -40px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(111,209,121,0.25) 0%, rgba(111,209,121,0) 70%);
+    border-radius: 50%;
+  }
+
+  ul.clean-list {
+    list-style: none;
+    padding: 0;
+  }
+  ul.clean-list li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 4px;
+    font-size: 8pt;
+    color: #334155;
+  }
+  ul.clean-list li::before {
+    content: "•";
+    position: absolute;
+    left: 2px;
+    color: #6FD179;
+    font-weight: 800;
+    font-size: 10pt;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER & EXECUTIVE SUMMARY -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area">
+      <span class="logo-dot"></span>
+      ideakicks
+    </div>
+    <div class="meta-tag">System Architecture & UX Blueprint</div>
+  </div>
+
+  <div class="cover-hero">
+    <div style="display: inline-block; background: rgba(111,209,121,0.22); color: #6FD179; font-weight: 800; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; border-radius: 4px; margin-bottom: 14px;">
+      Official Product Specification v1.0
+    </div>
+    <h1 style="font-size: 26pt; font-weight: 800; line-height: 1.15; margin-bottom: 10px; letter-spacing: -0.03em;">
+      Platform Information Architecture,<br>Onboarding Frames & User Flows
+    </h1>
+    <p style="font-size: 10pt; opacity: 0.88; max-width: 520px; line-height: 1.5;">
+      A comprehensive UX and technical reference manual covering ideakicks' core personas, hierarchical taxonomy, interactive onboarding frames, complete multi-state user flows, and full feature sitemap.
+    </p>
+    <div style="margin-top: 24px; display: flex; gap: 24px; font-size: 8pt; opacity: 0.75; font-family: 'JetBrains Mono', monospace;">
+      <span>TARGET PLATFORM: Web / Responsive</span>
+      <span>•</span>
+      <span>PRIMARY COLOR: #6FD179 / #082D4D</span>
+      <span>•</span>
+      <span>DATE: September 2026</span>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom: 16px;">
+    <div class="card card-slate">
+      <h3 style="font-size: 9.5pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">Document Scope & Deliverables</h3>
+      <ul class="clean-list">
+        <li><strong>Detailed Information Architecture:</strong> Global structural model, taxonomy, multi-entity relationships, and role-based permissions.</li>
+        <li><strong>Onboarding Flow Wireframe Frames:</strong> High-fidelity wireframe states for user onboarding, creator project wizard, and pledge checkout.</li>
+        <li><strong>End-to-End User Flows:</strong> Algorithmic decision trees and happy/edge case paths for Creators, Backers, Partners, and Account Ops.</li>
+        <li><strong>Comprehensive Feature Sitemap:</strong> Route index, component layout, authentication tiers, and key conversion metrics.</li>
+      </ul>
+    </div>
+    <div class="card card-slate">
+      <h3 style="font-size: 9.5pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">Core MVP Architectural Principles</h3>
+      <ul class="clean-list">
+        <li><strong>3-Persona Focused:</strong> Purpose-built for <em>Creators</em> (campaign launchers), <em>Backers</em> (project funders), and <em>Partners</em> (service & production allies).</li>
+        <li><strong>Zero Dark Patterns & Flat Depth:</strong> Direct access to Settings, Profile, and Sign Out from the global header.</li>
+        <li><strong>Curated Quality Gate:</strong> 48-hour human review workflow for all campaigns, ensuring backer trust and high fulfillment rates.</li>
+        <li><strong>Flexible Funding Integrity:</strong> Keep-what-you-raise model with transparent fees and Milestone-based reward scheduling.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="border-left: 3.5px solid #0F4C82;">
+    <h4 style="font-size: 8.5pt; font-weight: 700; color: #082D4D; margin-bottom: 4px;">Platform Summary & Target Ecosystem</h4>
+    <p style="font-size: 8pt; color: #475569; line-height: 1.45;">
+      ideakicks bridges the gap between early-stage innovation and passionate micro-communities. By combining a hands-on creator mentorship model with flexible pledge options and verified manufacturing partners, the platform lowers the friction from concept to physical fulfillment.
+    </p>
+  </div>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 1</span>
+  </div>
+</div>
+
+<!-- PAGE 2: INFORMATION ARCHITECTURE (IA) -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area"><span class="logo-dot"></span>ideakicks</div>
+    <div class="meta-tag">Section 1: Information Architecture</div>
+  </div>
+
+  <h2 class="section-title">
+    1. Detailed Information Architecture (IA)
+    <span class="section-tag">Hierarchy & Taxonomy</span>
+  </h2>
+  <p class="section-desc">
+    The ideakicks Information Architecture is structured to minimize navigational depth, separate public exploration from transactional tooling, and establish distinct, context-aware workspaces.
+  </p>
+
+  <h3 class="sub-title">1.1 Structural Hierarchy & Global Navigation Layers</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 18%;">Layer</th>
+        <th style="width: 25%;">Primary Components</th>
+        <th style="width: 30%;">Routes & Access</th>
+        <th style="width: 27%;">UX Intent & Navigation Behavior</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tier 0: Global Frame</strong></td>
+        <td>Dynamic Glass Header, Mobile Drawer, Quick Search, User Menu, Footer</td>
+        <td>All public and dashboard views (hidden inside Creator Studio editor)</td>
+        <td>Persistent brand anchor; quick search overlay; instant access to Profile / Settings / Sign Out.</td>
+      </tr>
+      <tr>
+        <td><strong>Tier 1: Discovery & Entry</strong></td>
+        <td>Home, Explore Grid, Persona Hubs (Creators, Backers, Partners), About, How it Works</td>
+        <td><code>/</code>, <code>/explore</code>, <code>/start</code>, <code>/backers</code>, <code>/partners</code>, <code>/how-it-works</code></td>
+        <td>Public engagement, category filtering, search relevancy, proof points, and conversion triggers.</td>
+      </tr>
+      <tr>
+        <td><strong>Tier 2: Transaction & Conversion</strong></td>
+        <td>Campaign Detail, Tier Selector, Backing Checkout, Project Wizard (Apply)</td>
+        <td><code>/campaign/:id</code>, <code>/campaign/:id/back</code>, <code>/start/application</code></td>
+        <td>High-focus, distraction-free transactional funnels with real-time validation and progress feedback.</td>
+      </tr>
+      <tr>
+        <td><strong>Tier 3: Account & Management</strong></td>
+        <td>Dashboard (Overview, Backed, Saved, Campaigns, Notifications, Settings), Creator Studio</td>
+        <td><code>/dashboard</code>, <code>/creator-studio/:id</code> (Protected)</td>
+        <td>Self-service hub for pledges, campaign milestone tracking, update publishing, and profile security.</td>
+      </tr>
+      <tr>
+        <td><strong>Tier 4: Legal & Support</strong></td>
+        <td>Terms of Service, Privacy Policy, Cookie Settings, Accessibility, Contact Us</td>
+        <td><code>/legal?tab=*</code>, <code>/contact</code>, <code>/pricing</code></td>
+        <td>Compliance documentation, dispute management, transparent pricing breakdowns, and direct support.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">1.2 Core Data Architecture & Entity Relationship Model</h3>
+  <div class="grid-3" style="margin-bottom: 12px;">
+    <div class="card card-slate">
+      <div style="font-weight: 700; color: #082D4D; font-size: 8pt; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <span>User / Profile</span>
+        <span class="badge badge-blue">Entity</span>
+      </div>
+      <p style="font-size: 7.2pt; color: #64748b; line-height: 1.4;">
+        • <code>id</code>, <code>email</code>, <code>role</code> (Creator / Backer / Partner)<br>
+        • <code>displayName</code>, <code>username</code>, <code>bio</code>, <code>avatarUrl</code><br>
+        • <code>interests[]</code> (Categories for recommendations)<br>
+        • <code>backedProjectIds[]</code>, <code>savedProjectIds[]</code><br>
+        • <code>notificationPrefs</code>, <code>kycStatus</code> (Stripe)
+      </p>
+    </div>
+    <div class="card card-slate">
+      <div style="font-weight: 700; color: #082D4D; font-size: 8pt; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <span>Campaign / Project</span>
+        <span class="badge badge-green">Entity</span>
+      </div>
+      <p style="font-size: 7.2pt; color: #64748b; line-height: 1.4;">
+        • <code>id</code>, <code>creatorId</code>, <code>title</code>, <code>category</code><br>
+        • <code>fundingGoal</code>, <code>amountRaised</code>, <code>backersCount</code><br>
+        • <code>daysRemaining</code>, <code>status</code> (Draft/InReview/Live/Funded)<br>
+        • <code>media</code> (Banner, Gallery, Video Pitch)<br>
+        • <code>storyMarkdown</code>, <code>rewards[]</code>, <code>milestones[]</code>
+      </p>
+    </div>
+    <div class="card card-slate">
+      <div style="font-weight: 700; color: #082D4D; font-size: 8pt; margin-bottom: 4px; display: flex; justify-content: space-between;">
+        <span>Pledge / Backing</span>
+        <span class="badge badge-amber">Entity</span>
+      </div>
+      <p style="font-size: 7.2pt; color: #64748b; line-height: 1.4;">
+        • <code>id</code>, <code>backerId</code>, <code>campaignId</code>, <code>rewardId</code><br>
+        • <code>pledgeAmount</code>, <code>shippingCost</code>, <code>totalPaid</code><br>
+        • <code>paymentStatus</code> (Authorized/Captured/Refunded)<br>
+        • <code>fulfillmentStatus</code> (Pending/InProduction/Shipped)<br>
+        • <code>shippingAddress</code>, <code>deliveryEta</code>
+      </p>
+    </div>
+  </div>
+
+  <h3 class="sub-title">1.3 Category Taxonomy & Tagging Hierarchy</h3>
+  <div class="grid-2">
+    <div class="card" style="margin-bottom: 0;">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">12 Core Project Taxonomies</h4>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+        <span class="badge badge-gray">Technology & AI</span>
+        <span class="badge badge-gray">Design & Hardware</span>
+        <span class="badge badge-gray">Games & Interactive</span>
+        <span class="badge badge-gray">Publishing & Writing</span>
+        <span class="badge badge-gray">Music & Audio</span>
+        <span class="badge badge-gray">Film & Animation</span>
+        <span class="badge badge-gray">Art & Creative</span>
+        <span class="badge badge-gray">Environment & Eco</span>
+        <span class="badge badge-gray">Food & Beverage</span>
+        <span class="badge badge-gray">Fashion & Wearables</span>
+        <span class="badge badge-gray">Education & EdTech</span>
+        <span class="badge badge-gray">Health & Wellness</span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom: 0;">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">Lifecycle Status Index</h4>
+      <div style="display: flex; flex-direction: column; gap: 3px; font-size: 7.5pt; color: #475569;">
+        <div><strong style="color: #64748b;">[Draft]</strong> In-progress creator application within Project Wizard.</div>
+        <div><strong style="color: #d97706;">[In Review]</strong> Submitted for manual 48-hour curation review.</div>
+        <div><strong style="color: #15803d;">[Live]</strong> Actively accepting backer pledges; counter live.</div>
+        <div><strong style="color: #0369a1;">[Funded]</strong> Funding timeframe completed; reward production active.</div>
+        <div><strong style="color: #475569;">[Fulfillment]</strong> Goods shipped, updates posted, backers satisfied.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 2</span>
+  </div>
+</div>
+
+<!-- PAGE 3: ONBOARDING FLOW FRAMES (PART 1: USER ONBOARDING) -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area"><span class="logo-dot"></span>ideakicks</div>
+    <div class="meta-tag">Section 2: Onboarding Flow Frames</div>
+  </div>
+
+  <h2 class="section-title">
+    2. Onboarding Flow Frames
+    <span class="section-tag">Wireframe Visuals</span>
+  </h2>
+  <p class="section-desc">
+    Interactive wireframe frames showing the exact step-by-step visual UI layout for platform user onboarding (Route: <code>/onboarding</code>). Features state validation, category personalization, and instant dashboard routing.
+  </p>
+
+  <h3 class="sub-title">2.1 Platform User Onboarding Flow (4-Step Funnel)</h3>
+  <div class="grid-4" style="margin-bottom: 14px;">
+    
+    <!-- FRAME 1 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 1: Role Selection</div>
+      </div>
+      <div class="frame-body">
+        <div style="font-size: 6.5pt; color: #94a3b8; font-weight: 700;">STEP 1 OF 4</div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D; line-height: 1.2;">How do you want to use ideakicks?</div>
+        <div style="font-size: 6.8pt; color: #64748b;">Select your primary platform persona:</div>
+        
+        <div style="border: 1.5px solid #6FD179; background: rgba(111,209,121,0.08); border-radius: 6px; padding: 5px; margin-top: 2px;">
+          <div style="font-weight: 700; color: #082D4D; font-size: 7.2pt;">✓ Creator</div>
+          <div style="font-size: 6.2pt; color: #64748b;">I have an idea or project to fund</div>
+        </div>
+        
+        <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px;">
+          <div style="font-weight: 700; color: #082D4D; font-size: 7.2pt;">Backer</div>
+          <div style="font-size: 6.2pt; color: #64748b;">Discover & pledge to projects</div>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px;">
+          <div style="font-weight: 700; color: #082D4D; font-size: 7.2pt;">Partner</div>
+          <div style="font-size: 6.2pt; color: #64748b;">Manufacturing & marketing services</div>
+        </div>
+
+        <div style="margin-top: auto;">
+          <div class="ui-btn ui-btn-primary">Continue →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRAME 2 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 2: Interests</div>
+      </div>
+      <div class="frame-body">
+        <div style="font-size: 6.5pt; color: #94a3b8; font-weight: 700;">STEP 2 OF 4</div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D; line-height: 1.2;">What are you interested in?</div>
+        <div style="font-size: 6.8pt; color: #64748b;">Pick at least 2 categories:</div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 3px; margin: 4px 0;">
+          <span style="background: #0F4C82; color: #fff; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt; font-weight: 600;">✓ Technology</span>
+          <span style="background: #0F4C82; color: #fff; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt; font-weight: 600;">✓ Design</span>
+          <span style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt;">Games</span>
+          <span style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt;">Publishing</span>
+          <span style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt;">Environment</span>
+          <span style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt;">Health</span>
+          <span style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 6px; font-size: 6.2pt;">Music</span>
+        </div>
+
+        <div style="font-size: 6.5pt; color: #15803d; font-weight: 600;">2 categories selected</div>
+
+        <div style="margin-top: auto; display: flex; gap: 4px;">
+          <div class="ui-btn ui-btn-outline" style="flex: 1;">Back</div>
+          <div class="ui-btn ui-btn-primary" style="flex: 2;">Continue →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRAME 3 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 3: Profile Setup</div>
+      </div>
+      <div class="frame-body">
+        <div style="font-size: 6.5pt; color: #94a3b8; font-weight: 700;">STEP 3 OF 4</div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D; line-height: 1.2;">Set up your profile</div>
+        
+        <div style="display: flex; align-items: center; gap: 6px; margin: 2px 0;">
+          <div style="width: 24px; height: 24px; border-radius: 50%; background: #082D4D; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 8pt; font-weight: 700;">A</div>
+          <div style="font-size: 6.5pt; color: #0F4C82; font-weight: 600;">Upload photo</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div>
+            <div style="font-size: 6pt; font-weight: 700; color: #082D4D;">DISPLAY NAME</div>
+            <div class="ui-input">Alex Johnson</div>
+          </div>
+          <div>
+            <div style="font-size: 6pt; font-weight: 700; color: #082D4D;">USERNAME</div>
+            <div class="ui-input">@alexj</div>
+          </div>
+          <div>
+            <div style="font-size: 6pt; font-weight: 700; color: #082D4D;">BIO (OPTIONAL)</div>
+            <div class="ui-input" style="height: 22px;">Backer & tech enthusiast...</div>
+          </div>
+        </div>
+
+        <div style="margin-top: auto; display: flex; gap: 4px;">
+          <div class="ui-btn ui-btn-outline" style="flex: 1;">Back</div>
+          <div class="ui-btn ui-btn-primary" style="flex: 2;">Finish Setup →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRAME 4 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 4: All Set</div>
+      </div>
+      <div class="frame-body" style="text-align: center; align-items: center; justify-content: center;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+          <div style="width: 20px; height: 20px; border-radius: 50%; background: #6FD179; color: #fff; font-size: 10pt; font-weight: 800; display: flex; align-items: center; justify-content: center;">✓</div>
+        </div>
+        <div style="font-size: 9pt; font-weight: 800; color: #082D4D;">You're all set, Alex!</div>
+        <div style="font-size: 6.5pt; color: #64748b; margin-bottom: 6px;">Your ideakicks profile has been configured.</div>
+        
+        <span class="badge badge-blue" style="margin-bottom: 10px;">Joined as Creator</span>
+
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
+          <div class="ui-btn ui-btn-primary">Go to Dashboard →</div>
+          <div class="ui-btn ui-btn-outline">Explore Campaigns</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-title">2.2 Frame Architecture & Logic Specifications</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 15%;">Frame ID</th>
+        <th style="width: 25%;">Primary Triggers & Inputs</th>
+        <th style="width: 30%;">Validation Rules</th>
+        <th style="width: 30%;">Edge Cases & Exit Behavior</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Frame 01: Role</strong></td>
+        <td>Radio selection: Creator / Backer / Partner</td>
+        <td><code>role !== null</code> required to enable continue button.</td>
+        <td>User can skip anytime via top right "Skip" button directly to Dashboard.</td>
+      </tr>
+      <tr>
+        <td><strong>Frame 02: Tags</strong></td>
+        <td>Multi-toggle category tags (12 available).</td>
+        <td><code>selectedCategories.length >= 2</code> strictly enforced.</td>
+        <td>Allows unlimited selection; visual counter alerts user when requirement met.</td>
+      </tr>
+      <tr>
+        <td><strong>Frame 03: Profile</strong></td>
+        <td>Avatar upload, Display Name, Username, Bio.</td>
+        <td>Display Name &gt; 2 chars, Username alphanumeric lowercase.</td>
+        <td>Autocompletes username from display name with whitespace removal.</td>
+      </tr>
+      <tr>
+        <td><strong>Frame 04: Ready</strong></td>
+        <td>Action routing: Go to Dashboard or Explore.</td>
+        <td>Session profile persistence to local state & database.</td>
+        <td>Deep-links to relevant starting tab based on selected role in Frame 01.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 3</span>
+  </div>
+</div>
+
+<!-- PAGE 4: ONBOARDING FLOW FRAMES (PART 2: CREATOR PROJECT WIZARD) -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area"><span class="logo-dot"></span>ideakicks</div>
+    <div class="meta-tag">Section 2: Onboarding Flow Frames</div>
+  </div>
+
+  <h2 class="section-title">
+    2. Onboarding Flow Frames (Continued)
+    <span class="section-tag">Creator Project Wizard</span>
+  </h2>
+  <p class="section-desc">
+    Visual wireframes for the Creator Project Wizard (Route: <code>/start/application</code>). Implements a 4-step progressive disclosure model from legal compliance through reward design to launch submission.
+  </p>
+
+  <h3 class="sub-title">2.3 Creator Project Application Frames (Route: /start/application)</h3>
+  <div class="grid-4" style="margin-bottom: 14px;">
+
+    <!-- WIZARD FRAME 1 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 1: Plan & Setup</div>
+      </div>
+      <div class="frame-body">
+        <div style="font-size: 6.5pt; color: #94a3b8; font-weight: 700;">WIZARD STEP 1</div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D; line-height: 1.2;">Eligibility & Legal</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 4px; margin: 4px 0;">
+          <div style="font-size: 6.2pt; color: #334155; display: flex; gap: 4px;">
+            <span style="color: #15803d; font-weight: bold;">☑</span> I am 18+ years old
+          </div>
+          <div style="font-size: 6.2pt; color: #334155; display: flex; gap: 4px;">
+            <span style="color: #15803d; font-weight: bold;">☑</span> Reside in supported country
+          </div>
+          
+          <div style="border: 1px dashed #cbd5e1; border-radius: 4px; padding: 4px; text-align: center; background: #f8fafc;">
+            <span style="font-size: 6pt; color: #0F4C82; font-weight: 700;">Upload Gov ID (Verified)</span>
+          </div>
+
+          <div style="border: 1px dashed #cbd5e1; border-radius: 4px; padding: 4px; text-align: center; background: #f8fafc;">
+            <span style="font-size: 6pt; color: #0F4C82; font-weight: 700;">Link Payout Bank (Linked)</span>
+          </div>
+
+          <div>
+            <div style="font-size: 5.8pt; font-weight: 700; color: #082D4D;">CATEGORY</div>
+            <div class="ui-input">Technology & AI</div>
+          </div>
+        </div>
+
+        <div style="margin-top: auto;">
+          <div class="ui-btn ui-btn-primary">Next: Project Story →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIZARD FRAME 2 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 2: Story & Media</div>
+      </div>
+      <div class="frame-body">
+        <div style="font-size: 6.5pt; color: #94a3b8; font-weight: 700;">WIZARD STEP 2</div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D; line-height: 1.2;">Campaign Story</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 4px; margin: 4px 0;">
+          <div>
+            <div style="font-size: 5.8pt; font-weight: 700; color: #082D4D;">PROJECT TITLE</div>
+            <div class="ui-input">EcoPulse Smart Purifier</div>
+          </div>
+          <div>
+            <div style="font-size: 5.8pt; font-weight: 700; color: #082D4D;">SHORT SUMMARY</div>
+            <div class="ui-input" style="height: 22px;">Solar powered purification...</div>
+          </div>
+          <div>
+            <div style="font-size: 5.8pt; font-weight: 700; color: #082D4D;">FUNDING GOAL (₹ / $)</div>
+            <div class="ui-input">₹ 2,50,000</div>
+          </div>
+          <div style="background: #f1f5f9; border-radius: 4px; padding: 4px; font-size: 6pt; color: #475569;">
+            📷 Cover Image Attached (16:9)
+          </div>
+        </div>
+
+        <div style="margin-top: auto; display: flex; gap: 4px;">
+          <div class="ui-btn ui-btn-outline" style="flex: 1;">Back</div>
+          <div class="ui-btn ui-btn-primary" style="flex: 2;">Next: Rewards →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIZARD FRAME 3 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 3: Rewards</div>
+      </div>
+      <div class="frame-body">
+        <div style="font-size: 6.5pt; color: #94a3b8; font-weight: 700;">WIZARD STEP 3</div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D; line-height: 1.2;">Reward Tiers</div>
+        
+        <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px; margin: 2px 0;">
+          <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 6.8pt; color: #082D4D;">
+            <span>Early Backer Kit</span>
+            <span style="color: #15803d;">₹ 4,999</span>
+          </div>
+          <div style="font-size: 5.8pt; color: #64748b;">Includes 1x EcoPulse + Solar Filter.</div>
+          <div style="font-size: 5.8pt; color: #0F4C82; font-weight: 600; margin-top: 2px;">Est. Delivery: Nov 2026</div>
+        </div>
+
+        <div style="border: 1px dashed #0F4C82; border-radius: 4px; padding: 3px; text-align: center; color: #0F4C82; font-size: 6.2pt; font-weight: 700;">
+          + Add Reward Tier
+        </div>
+
+        <div style="background: rgba(111,209,121,0.12); border-radius: 4px; padding: 4px; font-size: 6pt; color: #166534;">
+          ✓ Flexible funding enabled: keep what you raise.
+        </div>
+
+        <div style="margin-top: auto; display: flex; gap: 4px;">
+          <div class="ui-btn ui-btn-outline" style="flex: 1;">Back</div>
+          <div class="ui-btn ui-btn-primary" style="flex: 2;">Review & Submit →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIZARD FRAME 4 -->
+    <div class="frame-container">
+      <div class="frame-topbar">
+        <div class="frame-dots"><div class="frame-dot"></div><div class="frame-dot"></div></div>
+        <div class="frame-title">Step 4: Submission</div>
+      </div>
+      <div class="frame-body" style="text-align: center; align-items: center; justify-content: center;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+          <div style="width: 18px; height: 18px; border-radius: 50%; background: #6FD179; color: #fff; font-size: 9pt; font-weight: 800; display: flex; align-items: center; justify-content: center;">✓</div>
+        </div>
+        <div style="font-size: 8.5pt; font-weight: 800; color: #082D4D;">Campaign Submitted!</div>
+        <div style="font-size: 6.2pt; color: #64748b; margin-bottom: 6px;">Your project is now in our 48-hour human review queue.</div>
+
+        <div style="width: 100%; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px; text-align: left; font-size: 5.8pt; color: #475569; margin-bottom: 6px;">
+          <div><strong>Estimated Review:</strong> Within 48 hours</div>
+          <div><strong>Assigned Coach:</strong> Sarah Jenkins</div>
+          <div><strong>Preview Link:</strong> ideakicks.com/p/preview-82</div>
+        </div>
+
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 3px;">
+          <div class="ui-btn ui-btn-primary">View in Creator Studio</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-title">2.4 Backer Pledge & Transaction Wireframe Funnel</h3>
+  <div class="grid-3">
+    <div class="card card-slate">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 4px;">1. Campaign Tier Select</h4>
+      <p style="font-size: 7.2pt; color: #475569;">
+        Backer views campaign page at <code>/campaign/:id</code>. Sticky backing sidebar displays active tiers with remaining counts, pledge totals, and delivery date estimates. Clicking "Back This Project" scrolls to or launches checkout.
+      </p>
+    </div>
+    <div class="card card-slate">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 4px;">2. Frictionless Checkout</h4>
+      <p style="font-size: 7.2pt; color: #475569;">
+        Clean single-page checkout at <code>/campaign/:id/back</code>. Shows breakdown: Base Pledge + Shipping destination selection + Optional bonus contribution. Integrated with Stripe Payment Element.
+      </p>
+    </div>
+    <div class="card card-slate">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 4px;">3. Instant Confirmation & Dashboard</h4>
+      <p style="font-size: 7.2pt; color: #475569;">
+        Confirmation modal generates backer number, receipt, and social sharing links. Immediately appends campaign to user's <strong>Backed Projects</strong> tab in <code>/dashboard</code> for real-time progress updates.
+      </p>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 4</span>
+  </div>
+</div>
+
+<!-- PAGE 5: COMPLETE USER FLOWS -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area"><span class="logo-dot"></span>ideakicks</div>
+    <div class="meta-tag">Section 3: End-to-End User Flows</div>
+  </div>
+
+  <h2 class="section-title">
+    3. End-to-End User Flows
+    <span class="section-tag">Interactive Pathways</span>
+  </h2>
+  <p class="section-desc">
+    Complete logic diagrams illustrating user state transitions, system validations, branching conditionals, and exception states across ideakicks' core experiences.
+  </p>
+
+  <h3 class="sub-title">3.1 Flow A: The Creator Journey (Ideation to Funded Campaign)</h3>
+  <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+    
+    <div class="flow-row">
+      <div class="flow-box">
+        <strong>1. Discovery & Intent</strong><br>
+        Landing at <code>/start</code>. Reviews value props (Coach, Network, Flexible Funding) & FAQs.
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <strong>2. Auth Check</strong><br>
+        Is user authenticated?<br>
+        <span style="color: #15803d;">YES:</span> To Wizard<br>
+        <span style="color: #b91c1c;">NO:</span> <code>/signup</code> with redirect
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <strong>3. Project Wizard</strong><br>
+        Complete 4 stages: Legal ID, Story Media, Reward Tiers, and Stripe Connect.
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-box decision">
+        <strong>4. Curation Gate</strong><br>
+        Human team reviews within 48h. Verified against community guidelines?
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color: #d97706;">
+        <strong>5a. Revisions Needed</strong><br>
+        Coach provides actionable feedback in Creator Studio. Re-submit allowed.
+      </div>
+      <div class="flow-arrow">or</div>
+      <div class="flow-box success">
+        <strong>5b. Approved & Scheduled</strong><br>
+        Creator schedules launch date or goes live immediately at <code>/campaign/:id</code>.
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-box success">
+        <strong>6. Live Campaign Management</strong><br>
+        Post updates, track pledges in real-time, message backers, and coordinate with verified vendors.
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box success">
+        <strong>7. Funding Close & Payout</strong><br>
+        Flexible funding settles to linked bank account. Fulfillment status tracked in Dashboard.
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-title">3.2 Flow B: The Backer Journey (Discovery to Fulfillment Tracking)</h3>
+  <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+    
+    <div class="flow-row">
+      <div class="flow-box">
+        <strong>1. Search & Filter</strong><br>
+        Browses <code>/explore</code> by category, funding status, trending, or search keywords.
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <strong>2. Project Deep-Dive</strong><br>
+        Evaluates pitch, video, creator profile, risk statement, and reward tiers.
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <strong>3. Tier Selection</strong><br>
+        Selects reward kit or custom pledge without reward.
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-box">
+        <strong>4. Checkout & Payment</strong><br>
+        Enters shipping destination & payment info at <code>/campaign/:id/back</code>.
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box decision">
+        <strong>5. Payment Auth</strong><br>
+        Card authorized via Stripe.<br>
+        <span style="color: #15803d;">SUCCESS:</span> Order confirmed<br>
+        <span style="color: #b91c1c;">FAIL:</span> Inline retry prompt
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box success">
+        <strong>6. Active Backer State</strong><br>
+        Added to <code>/dashboard</code> Backed list. Receives email updates & milestone alerts.
+      </div>
+    </div>
+
+  </div>
+
+  <h3 class="sub-title">3.3 Flow C: Account Management & Flat Navigation Flow</h3>
+  <div class="grid-2">
+    <div class="card card-slate">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 4px;">Header Profile Dropdown Flow</h4>
+      <p style="font-size: 7.5pt; color: #475569; line-height: 1.45;">
+        <strong>Entry:</strong> User clicks Avatar icon in global header.<br>
+        <strong>Options:</strong><br>
+        1. <strong>Dashboard:</strong> Opens <code>/dashboard</code> (default Overview tab).<br>
+        2. <strong>Settings:</strong> Deep-links directly to <code>/dashboard#settings</code> via URL hash listener.<br>
+        3. <strong>Sign Out:</strong> Clears session tokens, redirects to <code>/login</code> with success toast.<br>
+        <em>Result:</em> Solves the "unnecessarily deep navigation" UX defect.
+      </p>
+    </div>
+    <div class="card card-slate">
+      <h4 style="font-size: 8pt; font-weight: 700; color: #082D4D; margin-bottom: 4px;">Partner / Vendor Collaboration Flow</h4>
+      <p style="font-size: 7.5pt; color: #475569; line-height: 1.45;">
+        <strong>1. Application:</strong> Partner visits <code>/vendors</code> and submits capability deck.<br>
+        <strong>2. Vetting:</strong> Operations team audits past manufacturing / marketing performance.<br>
+        <strong>3. Matchmaking:</strong> Verified partners get listed in Creator Studio vendor directory.<br>
+        <strong>4. Direct Contact:</strong> Creators request quotes directly for packaging, injection molding, or digital PR.
+      </p>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 5</span>
+  </div>
+</div>
+
+<!-- PAGE 6: COMPREHENSIVE FEATURE SITEMAP -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area"><span class="logo-dot"></span>ideakicks</div>
+    <div class="meta-tag">Section 4: Feature Sitemap</div>
+  </div>
+
+  <h2 class="section-title">
+    4. Comprehensive Feature Sitemap
+    <span class="section-tag">Route Index & Components</span>
+  </h2>
+  <p class="section-desc">
+    Full technical tree and route registry detailing URL endpoints, access requirements, primary modules, interaction states, and conversion metrics across the application.
+  </p>
+
+  <h3 class="sub-title">4.1 Complete Application Route & Component Specification</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 14%;">Route Path</th>
+        <th style="width: 12%;">Access Tier</th>
+        <th style="width: 20%;">Core Page Modules</th>
+        <th style="width: 26%;">Interactive Components & States</th>
+        <th style="width: 28%;">Conversion Goal & Technical Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>/</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Hero, 3-Persona Pillars, Featured Campaigns, Value Props, Global CTA</td>
+        <td>Category filter pills, Campaign preview cards, Video preview modal</td>
+        <td>Route user to <code>/start</code> (Creator) or <code>/explore</code> (Backer). Zero unverified metrics.</td>
+      </tr>
+      <tr>
+        <td><code>/explore</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Search Filter Bar, Category Badges, Sort Controls, Responsive Project Grid</td>
+        <td>Live search query, Category multi-toggle, Sort by Funding/Ending Soon, Pagination</td>
+        <td>Card click-through to <code>/campaign/:id</code>; bookmark to Saved.</td>
+      </tr>
+      <tr>
+        <td><code>/start</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Creator Hero, 3 Starting Stages, What We Provide, 4-Step Journey, FAQs</td>
+        <td>Interactive FAQ accordion, Stage selection cards, Direct application CTA</td>
+        <td>Primary creator conversion gate leading to <code>/start/application</code>.</td>
+      </tr>
+      <tr>
+        <td><code>/start/application</code></td>
+        <td><span class="badge badge-blue">Auth Required</span></td>
+        <td>4-Step Project Wizard: Eligibility, Story & Media, Reward Builder, Submit</td>
+        <td>ID verification upload, Month-year calendar picker, Dynamic reward tier adder, Stripe KYC</td>
+        <td>Inserts draft into database; initiates 48-hour human review protocol.</td>
+      </tr>
+      <tr>
+        <td><code>/campaign/:id</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Campaign Header, Video Player, Story Body, Reward Selector, Creator Bio</td>
+        <td>Pledge tier cards with hover elevation, Bookmark button, Social share dialog</td>
+        <td>Back project trigger routing to <code>/campaign/:id/back</code>.</td>
+      </tr>
+      <tr>
+        <td><code>/campaign/:id/back</code></td>
+        <td><span class="badge badge-blue">Auth Required</span></td>
+        <td>Checkout Summary, Reward Tier Selection, Shipping Form, Stripe Element</td>
+        <td>Real-time shipping calculation, Payment card validation, One-click Apple/Google Pay</td>
+        <td>Payment capture; creates Backing record; sends confirmation email.</td>
+      </tr>
+      <tr>
+        <td><code>/dashboard</code></td>
+        <td><span class="badge badge-blue">Auth Required</span></td>
+        <td>Profile Header, Nav Tabs: Overview, Backed, Saved, Campaigns, Notifications, Settings</td>
+        <td>Hash listener (<code>#settings</code>), Unread notification badges, Tab switching, Save forms</td>
+        <td>Primary user retention and management interface. Includes direct Sign Out.</td>
+      </tr>
+      <tr>
+        <td><code>/creator-studio/:id</code></td>
+        <td><span class="badge badge-green">Creator Only</span></td>
+        <td>Analytics Dashboard, Backer CRM, Update Composer, Milestone Tracker</td>
+        <td>Markdown WYSIWYG editor, CSV export of backer orders, Fulfillment checklist</td>
+        <td>Post-launch creator workspace for backer communication and fulfillment.</td>
+      </tr>
+      <tr>
+        <td><code>/backers</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Backer Value Props, Guarantee Explanation, Trending Projects</td>
+        <td>Interactive backing calculator, Trust badge popovers</td>
+        <td>Education and conversion of first-time crowdfunding backers.</td>
+      </tr>
+      <tr>
+        <td><code>/vendors</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Partner Value Props, Directory of Capabilities, Partnership Application</td>
+        <td>Application form with file upload for capability decks</td>
+        <td>Lead generation for verified manufacturing and marketing vendors.</td>
+      </tr>
+      <tr>
+        <td><code>/login</code> &amp; <code>/signup</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Authentication Forms, Google OAuth, Password Recovery Links</td>
+        <td>Inline field validation, Password show/hide, Remember session token</td>
+        <td>Authentication cookie setup; redirects to intended destination or <code>/onboarding</code>.</td>
+      </tr>
+      <tr>
+        <td><code>/legal</code></td>
+        <td><span class="badge badge-gray">Public</span></td>
+        <td>Terms of Service, Privacy Policy, Cookie Policy, Accessibility Statement</td>
+        <td>Tabbed document reader synchronized with <code>?tab=*</code> query params</td>
+        <td>GDPR, CCPA, and payment compliance disclosures.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">4.2 Navigation Tree & Redirection Matrix</h3>
+  <div class="tree-node">
+    <div class="tree-item"><span class="tree-badge">/</span> <strong>Homepage</strong> (Public Entry)</div>
+    <div class="tree-node">
+      <div class="tree-item"><span class="tree-badge">/explore</span> Project Discovery &amp; Search Grid</div>
+      <div class="tree-item"><span class="tree-badge">/start</span> Creator Landing → <span class="tree-badge">/start/application</span> Wizard</div>
+      <div class="tree-item"><span class="tree-badge">/backers</span> Backer Hub &amp; Protection Overview</div>
+      <div class="tree-item"><span class="tree-badge">/vendors</span> Partner &amp; Production Network</div>
+      <div class="tree-item"><span class="tree-badge">/mentors</span> &amp; <span class="tree-badge">/investors</span> <em>(Redirects cleanly to <code>/contact</code> in MVP)</em></div>
+      <div class="tree-item"><span class="tree-badge">/dashboard</span> User Workspace [Overview | Backed | Saved | Campaigns | Notifications | Settings]</div>
+      <div class="tree-item"><span class="tree-badge">/legal</span> Compliance Hub [Terms | Privacy | Cookies | Accessibility]</div>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 6</span>
+  </div>
+</div>
+
+<!-- PAGE 7: TECHNICAL SPECIFICATION & COMPLIANCE -->
+<div class="page">
+  <div class="doc-header">
+    <div class="logo-area"><span class="logo-dot"></span>ideakicks</div>
+    <div class="meta-tag">Section 5: Technical & UX Standards</div>
+  </div>
+
+  <h2 class="section-title">
+    5. Technical & UX Implementation Standards
+    <span class="section-tag">Quality & Security</span>
+  </h2>
+  <p class="section-desc">
+    Architecture standards governing state restoration, accessibility benchmarks, design tokens, and defensive error handling across all frontend modules.
+  </p>
+
+  <div class="grid-2" style="margin-bottom: 14px;">
+    
+    <div class="card card-slate">
+      <h3 style="font-size: 9pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">5.1 Navigation & Scroll Engine</h3>
+      <p style="font-size: 7.8pt; color: #475569; line-height: 1.45; margin-bottom: 6px;">
+        To resolve critical scroll persistence bugs, the global layout mounts a dedicated <code>ScrollToTop</code> listener hooked into React Router's <code>useLocation()</code>:
+      </p>
+      <div style="background: #082D4D; color: #6FD179; font-family: 'JetBrains Mono', monospace; font-size: 6.8pt; padding: 6px 8px; border-radius: 4px; line-height: 1.4;">
+        useEffect(() =&gt; {<br>
+        &nbsp;&nbsp;window.scrollTo({ top: 0, left: 0, behavior: 'instant' });<br>
+        }, [pathname]);
+      </div>
+      <p style="font-size: 7.2pt; color: #64748b; margin-top: 6px;">
+        Guarantees that all sub-route changes load with the viewport focused cleanly at the top hero section.
+      </p>
+    </div>
+
+    <div class="card card-slate">
+      <h3 style="font-size: 9pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">5.2 Design Tokens & Visual Hierarchy</h3>
+      <table style="width: 100%; font-size: 7.5pt; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 3px 0; font-weight: 700; color: #082D4D;">Primary Brand</td>
+          <td style="padding: 3px 0;"><span style="display: inline-block; width: 10px; height: 10px; background: #6FD179; border-radius: 2px; vertical-align: middle; margin-right: 4px;"></span><code>#6FD179</code> (Accent Green)</td>
+        </tr>
+        <tr>
+          <td style="padding: 3px 0; font-weight: 700; color: #082D4D;">Deep Navy (Base)</td>
+          <td style="padding: 3px 0;"><span style="display: inline-block; width: 10px; height: 10px; background: #082D4D; border-radius: 2px; vertical-align: middle; margin-right: 4px;"></span><code>#082D4D</code> (Headings & Dark BG)</td>
+        </tr>
+        <tr>
+          <td style="padding: 3px 0; font-weight: 700; color: #082D4D;">Secondary Blue</td>
+          <td style="padding: 3px 0;"><span style="display: inline-block; width: 10px; height: 10px; background: #0F4C82; border-radius: 2px; vertical-align: middle; margin-right: 4px;"></span><code>#0F4C82</code> (Primary Buttons & Links)</td>
+        </tr>
+        <tr>
+          <td style="padding: 3px 0; font-weight: 700; color: #082D4D;">Typography</td>
+          <td style="padding: 3px 0;">Clash Display (Headings) / Satoshi (Body)</td>
+        </tr>
+        <tr>
+          <td style="padding: 3px 0; font-weight: 700; color: #082D4D;">Border Radius</td>
+          <td style="padding: 3px 0;">Cards: 16px / Buttons: 9999px (Pill)</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="card card-slate" style="margin-bottom: 14px;">
+    <h3 style="font-size: 9pt; font-weight: 700; color: #082D4D; margin-bottom: 6px;">5.3 Accessibility & Responsive Performance Matrix</h3>
+    <div class="grid-3">
+      <div>
+        <div style="font-size: 8pt; font-weight: 700; color: #0F4C82; margin-bottom: 2px;">WCAG 2.1 AA Compliance</div>
+        <p style="font-size: 7.2pt; color: #475569;">
+          All text elements maintain a minimum 4.5:1 contrast ratio against backdrops. Form controls feature explicit labels and aria attributes for screen readers.
+        </p>
+      </div>
+      <div>
+        <div style="font-size: 8pt; font-weight: 700; color: #0F4C82; margin-bottom: 2px;">Touch & Mobile Ergonomics</div>
+        <p style="font-size: 7.2pt; color: #475569;">
+          Interactive click targets meet or exceed 44×44px. Full-width sticky CTA buttons deployed on mobile breakpoints to ensure effortless one-handed thumb interaction.
+        </p>
+      </div>
+      <div>
+        <div style="font-size: 8pt; font-weight: 700; color: #0F4C82; margin-bottom: 2px;">Glassmorphism Performance</div>
+        <p style="font-size: 7.2pt; color: #475569;">
+          Header uses dynamic Alpha + Blur interpolation throttled to passive scroll event listeners, avoiding layout recalculation and jank.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-navy" style="padding: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h4 style="font-size: 11pt; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Ready for Production Execution</h4>
+        <p style="font-size: 8pt; color: rgba(255,255,255,0.75); max-width: 480px; line-height: 1.4;">
+          This specification document reflects the active architecture of ideakicks. All components, routes, and styling tokens conform to <code>DESIGN_SYSTEM.md</code>.
+        </p>
+      </div>
+      <div style="text-align: right;">
+        <span class="badge badge-green" style="font-size: 8pt; padding: 4px 10px;">APPROVED SPECIFICATION</span>
+        <div style="font-size: 7pt; color: rgba(255,255,255,0.6); margin-top: 4px;">ideakicks Core Architecture Group</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>Ideakicks Product Architecture Document</span>
+    <span>CONFIDENTIAL & PROPRIETARY</span>
+    <span>Page 7</span>
+  </div>
+</div>
+
+</body>
+</html>

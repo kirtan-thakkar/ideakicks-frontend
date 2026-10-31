@@ -1,0 +1,38 @@
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+@utility animate-float {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@utility animate-float-delayed {
+  animation: float-slow 6s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+@utility animate-hang-wiggle {
+  animation: hang-wiggle 8s ease-in-out infinite;
+}
+
+@utility animate-swim {
+  animation: swim-slow 12s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes hang-wiggle {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  33% { transform: rotate(2deg) translateY(2px); }
+  66% { transform: rotate(-2deg) translateY(-2px); }
+}
+
+@keyframes swim-slow {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  50% { transform: translateX(8px) translateY(-5px) rotate(1deg); }
+}
+
