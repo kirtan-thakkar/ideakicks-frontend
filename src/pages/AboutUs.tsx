@@ -102,12 +102,7 @@ const PILLARS = [
     title: "A Curated Sanctuary, Not an Open Directory",
     desc: "We review every single pitch by hand within 48 hours. By saying 'no' to 85% of submissions, we protect the visibility of the remarkable 15% that truly deserve to exist.",
     image: "/images/step_idea.jpg",
-    stats: "85% Filtered for Quality",
-    guardian: {
-      name: "Bodhi",
-      role: "The Mentor",
-      svg: "/characters/owl.svg",
-    },
+    stats: "85% Filtered for Quality"
   },
   {
     num: "02",
@@ -115,12 +110,7 @@ const PILLARS = [
     title: "Milestone-Backed Trust For Backers",
     desc: "Backers aren't donors; they are early believers. Our smart escrow aligns incentives: funds are released in transparent phases as creators hit production milestones.",
     image: "/images/step_product.jpg",
-    stats: "100% Escrow Aligned",
-    guardian: {
-      name: "Myrme",
-      role: "The Backers",
-      svg: "/characters/ant.svg",
-    },
+    stats: "100% Escrow Aligned"
   },
   {
     num: "03",
@@ -128,12 +118,7 @@ const PILLARS = [
     title: "Vetted Ecosystem of Makers & Mentors",
     desc: "Capital alone doesn't manufacture a product. We connect creators directly with trusted industrial designers, tooling facilities, and certified logistics experts.",
     image: "/images/step_campaign.jpg",
-    stats: "50+ Vetted Partners",
-    guardian: {
-      name: "Mimi",
-      role: "The Vendor",
-      svg: "/characters/bee.svg",
-    },
+    stats: "50+ Vetted Partners"
   }
 ];
 
@@ -418,28 +403,15 @@ export function AboutUs() {
             {PILLARS.map((p, i) => (
               <div 
                 key={i} 
-                className="group bg-white rounded-3xl border border-[#0F4C82]/10 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="bg-white rounded-3xl border border-[#0F4C82]/10 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="relative aspect-[16/10] overflow-hidden bg-[#082D4D]/05">
                     <ImageWithFallback 
                       src={p.image} 
                       alt={p.title} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/70 via-transparent to-transparent pointer-events-none" />
-
-                    {/* Character Guardian Floating Badge */}
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-white/60 shadow-sm transition-transform duration-300 group-hover:scale-105">
-                        <img src={p.guardian.svg} alt={p.guardian.name} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
-                        <span className="text-xs font-bold text-[#082D4D]">{p.guardian.name}</span>
-                        <span className="text-[0.65rem] text-[#082D4D]/60 font-medium hidden sm:inline">• {p.guardian.role}</span>
-                      </div>
-                      <span className="text-[0.7rem] font-semibold text-white/95 bg-[#082D4D]/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10">
-                        {p.stats}
-                      </span>
-                    </div>
                   </div>
                   <div className="p-7">
                     <p className="text-xs text-[#0F4C82] font-mono font-bold mb-1">{p.num}</p>
