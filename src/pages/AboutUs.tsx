@@ -102,7 +102,12 @@ const PILLARS = [
     title: "A Curated Sanctuary, Not an Open Directory",
     desc: "We review every single pitch by hand within 48 hours. By saying 'no' to 85% of submissions, we protect the visibility of the remarkable 15% that truly deserve to exist.",
     image: "/images/step_idea.jpg",
-    stats: "85% Filtered for Quality"
+    stats: "85% Filtered for Quality",
+    guardian: {
+      name: "Bodhi",
+      role: "The Mentor",
+      svg: "/characters/owl.svg",
+    },
   },
   {
     num: "02",
@@ -110,7 +115,12 @@ const PILLARS = [
     title: "Milestone-Backed Trust For Backers",
     desc: "Backers aren't donors; they are early believers. Our smart escrow aligns incentives: funds are released in transparent phases as creators hit production milestones.",
     image: "/images/step_product.jpg",
-    stats: "100% Escrow Aligned"
+    stats: "100% Escrow Aligned",
+    guardian: {
+      name: "Myrme",
+      role: "The Backers",
+      svg: "/characters/ant.svg",
+    },
   },
   {
     num: "03",
@@ -118,7 +128,12 @@ const PILLARS = [
     title: "Vetted Ecosystem of Makers & Mentors",
     desc: "Capital alone doesn't manufacture a product. We connect creators directly with trusted industrial designers, tooling facilities, and certified logistics experts.",
     image: "/images/step_campaign.jpg",
-    stats: "50+ Vetted Partners"
+    stats: "50+ Vetted Partners",
+    guardian: {
+      name: "Mimi",
+      role: "The Vendor",
+      svg: "/characters/bee.svg",
+    },
   }
 ];
 
@@ -309,8 +324,16 @@ export function AboutUs() {
               <p className="text-4xl sm:text-5xl font-normal text-[#6FD179] mb-2" style={{ fontFamily: CD, fontWeight: 500 }}>₹0</p>
               <p className="text-sm text-[#082D4D]/60 font-medium">Upfront Listing Fee</p>
             </div>
-            <div className="text-center sm:border-l sm:border-[#082D4D]/08">
-              <p className="text-4xl sm:text-5xl font-normal text-[#082D4D] mb-2" style={{ fontFamily: CD, fontWeight: 500 }}>48h</p>
+            <div className="text-center sm:border-l sm:border-[#082D4D]/08 group">
+              <div className="inline-flex items-center justify-center gap-2">
+                <p className="text-4xl sm:text-5xl font-normal text-[#082D4D] mb-2" style={{ fontFamily: CD, fontWeight: 500 }}>48h</p>
+                <div 
+                  className="w-9 h-9 sm:w-10 sm:h-10 -mt-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 cursor-help" 
+                  title="Guaranteed by Bodhi's 48-Hour Human Review"
+                >
+                  <img src="/characters/owl.svg" alt="Bodhi - The Mentor" className="w-full h-full object-contain filter drop-shadow-sm" />
+                </div>
+              </div>
               <p className="text-sm text-[#082D4D]/60 font-medium">Human Review Guarantee</p>
             </div>
             <div className="text-center sm:border-l sm:border-[#082D4D]/08">
@@ -395,15 +418,28 @@ export function AboutUs() {
             {PILLARS.map((p, i) => (
               <div 
                 key={i} 
-                className="bg-white rounded-3xl border border-[#0F4C82]/10 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group bg-white rounded-3xl border border-[#0F4C82]/10 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="relative aspect-[16/10] overflow-hidden bg-[#082D4D]/05">
                     <ImageWithFallback 
                       src={p.image} 
                       alt={p.title} 
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/70 via-transparent to-transparent pointer-events-none" />
+
+                    {/* Character Guardian Floating Badge */}
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-white/60 shadow-sm transition-transform duration-300 group-hover:scale-105">
+                        <img src={p.guardian.svg} alt={p.guardian.name} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
+                        <span className="text-xs font-bold text-[#082D4D]">{p.guardian.name}</span>
+                        <span className="text-[0.65rem] text-[#082D4D]/60 font-medium hidden sm:inline">• {p.guardian.role}</span>
+                      </div>
+                      <span className="text-[0.7rem] font-semibold text-white/95 bg-[#082D4D]/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10">
+                        {p.stats}
+                      </span>
+                    </div>
                   </div>
                   <div className="p-7">
                     <p className="text-xs text-[#0F4C82] font-mono font-bold mb-1">{p.num}</p>
@@ -443,15 +479,23 @@ export function AboutUs() {
           </div>
 
           {/* Vision */}
-          <div>
+          <div className="relative">
+            {/* Avari Soaring Silhouette Ambient Accent */}
+            <div 
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 opacity-15 pointer-events-none select-none transition-opacity duration-500 hover:opacity-25 hidden sm:block"
+              aria-hidden="true"
+            >
+              <img src="/characters/eagle.svg" alt="" className="w-full h-full object-contain filter drop-shadow-[0_0_50px_rgba(111,209,121,0.2)] -rotate-6" />
+            </div>
+
             <div className="flex items-center gap-4 mb-8">
               <div className="h-px bg-[#6FD179] w-8 md:w-12" />
               <h2 className="text-xs md:text-sm font-bold tracking-widest uppercase text-[#6FD179]">Our Vision</h2>
             </div>
-            <h3 className="text-4xl sm:text-5xl md:text-6xl font-medium text-white mb-8 leading-[1.1]" style={{ fontFamily: CD }}>
+            <h3 className="text-4xl sm:text-5xl md:text-6xl font-medium text-white mb-8 leading-[1.1] relative z-10" style={{ fontFamily: CD }}>
               A global renaissance of tangible craft.
             </h3>
-            <p className="text-white/70 text-lg md:text-2xl leading-relaxed max-w-3xl font-light">
+            <p className="text-white/70 text-lg md:text-2xl leading-relaxed max-w-3xl font-light relative z-10">
               A future where craftsmanship, sustainable technology, and purposeful design triumph over disposable consumerism and algorithmic hype. We envision a world where anyone with a viable prototype can bring it to production.
             </p>
           </div>

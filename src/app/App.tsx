@@ -27,6 +27,7 @@ import { CreatorStudio } from "../pages/CreatorStudio";
 
 import { Toaster } from "sonner";
 import { ScrollToTop } from "../components/common/ScrollToTop";
+import { CharacterCursor } from "../components/common/CharacterCursor";
 
 const NO_FOOTER = ["/login", "/signup", "/forgot-password", "/onboarding", "/start/application"];
 const NO_HEADER = ["/creator-studio"];
@@ -41,6 +42,7 @@ function AppLayout() {
   return (
     <>
       <ScrollToTop />
+      <CharacterCursor />
       <Toaster position="bottom-right" richColors />
       {!hideHeader && <Header />}
       <Routes>

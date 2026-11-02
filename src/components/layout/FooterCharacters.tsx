@@ -47,8 +47,8 @@ export function FooterCharacters() {
         >
           Backed by character
         </h3>
-        <p className="text-white/65 text-base sm:text-lg max-w-xl">
-          Hover on desktop or tap on mobile to reveal their story.
+        <p className="text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
+          The five archetypes guiding our ecosystem — uniting creators, mentors, vendors, and backers around authentic craft.
         </p>
       </div>
 
