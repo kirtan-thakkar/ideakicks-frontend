@@ -381,81 +381,126 @@ export function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-            {/* Box 1: For Creators */}
-            <div className="group relative rounded-[2rem] p-8 flex flex-col justify-between text-white overflow-hidden shadow-lg min-h-[380px]">
-              <img
-                src="/images/creators_path.jpg"
-                alt="For Creators"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20 transition-opacity duration-300" />
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                  <h3 className="font-heading text-3xl font-medium mb-3 text-white shadow-sm drop-shadow-md">For Creators</h3>
-                  <p className="text-white/95 text-base leading-relaxed mb-8 font-sans drop-shadow-sm">
-                    Launch your next big idea with a dedicated 1-on-1 coach and a community that backs things it believes in.
-                  </p>
-                </div>
-                <div className="mt-auto pt-4 border-t border-white/20">
-                  <Link 
-                    to="/start" 
-                    className="inline-flex items-center gap-2 text-white font-bold hover:text-[#6FD179] transition-colors font-sans text-sm group/link"
-                  >
-                    Start a project <ArrowRight size={16} weight="bold" className="group-hover/link:translate-x-1 transition-transform" />
-                  </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-24 md:gap-6 w-full pt-16 md:pt-20">
+            {/* Box 1: For Creators -> Navi */}
+            <div className="group relative">
+              {/* Peeking Character (Navi - Octopus) */}
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-[68%] z-0 pointer-events-none transition-all duration-500 ease-out md:translate-y-6 md:opacity-0 md:group-hover:-translate-y-[68%] md:group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                <img
+                  src="/characters/octopus.svg"
+                  alt="Navi"
+                  className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain drop-shadow-[0_12px_24px_rgba(8,45,77,0.35)] -rotate-3 transition-transform duration-500 group-hover:rotate-0"
+                />
+              </div>
+
+              {/* Card Body */}
+              <div className="relative z-10 rounded-[2rem] p-8 flex flex-col justify-between text-white overflow-hidden shadow-lg min-h-[380px] bg-[#082D4D]">
+                <img
+                  src="/images/creators_path.jpg"
+                  alt="For Creators"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20 transition-opacity duration-300" />
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <h3 className="font-heading text-3xl font-medium mb-3 text-white shadow-sm drop-shadow-md">For Creators</h3>
+                    <p className="text-white/95 text-base leading-relaxed mb-8 font-sans drop-shadow-sm">
+                      Launch your next big idea with a dedicated 1-on-1 coach and a community that backs things it believes in.
+                    </p>
+                  </div>
+                  <div className="mt-auto pt-4 border-t border-white/20">
+                    <Link 
+                      to="/start" 
+                      className="inline-flex items-center gap-2 text-white font-bold hover:text-[#6FD179] transition-colors font-sans text-sm group/link"
+                    >
+                      Start a project <ArrowRight size={16} weight="bold" className="group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Box 2: For Backers */}
-            <div className="group relative rounded-[2rem] p-8 flex flex-col justify-between text-white overflow-hidden shadow-lg min-h-[380px]">
-              <img
-                src="/images/backers_path.jpg"
-                alt="For Backers"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20 transition-opacity duration-300" />
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                  <h3 className="font-heading text-3xl font-medium mb-3 text-white shadow-sm drop-shadow-md">For Backers</h3>
-                  <p className="text-white/95 text-base leading-relaxed mb-8 font-sans drop-shadow-sm">
-                    Fund curated campaigns that have passed human review. No noise, just great ideas worth backing.
-                  </p>
-                </div>
-                <div className="mt-auto pt-4 border-t border-white/20">
-                  <Link 
-                    to="/backers" 
-                    className="inline-flex items-center gap-2 text-white font-bold hover:text-[#6FD179] transition-colors font-sans text-sm group/link"
-                  >
-                    Explore campaigns <ArrowRight size={16} weight="bold" className="group-hover/link:translate-x-1 transition-transform" />
-                  </Link>
+            {/* Box 2: For Backers -> Myrme */}
+            <div className="group relative">
+              {/* Peeking Character (Myrme - Ant) */}
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-[68%] z-0 pointer-events-none transition-all duration-500 ease-out md:translate-y-6 md:opacity-0 md:group-hover:-translate-y-[68%] md:group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                <img
+                  src="/characters/ant.svg"
+                  alt="Myrme"
+                  className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain drop-shadow-[0_12px_24px_rgba(8,45,77,0.35)] rotate-3 transition-transform duration-500 group-hover:rotate-0"
+                />
+              </div>
+
+              {/* Card Body */}
+              <div className="relative z-10 rounded-[2rem] p-8 flex flex-col justify-between text-white overflow-hidden shadow-lg min-h-[380px] bg-[#082D4D]">
+                <img
+                  src="/images/backers_path.jpg"
+                  alt="For Backers"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20 transition-opacity duration-300" />
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <h3 className="font-heading text-3xl font-medium mb-3 text-white shadow-sm drop-shadow-md">For Backers</h3>
+                    <p className="text-white/95 text-base leading-relaxed mb-8 font-sans drop-shadow-sm">
+                      Fund curated campaigns that have passed human review. No noise, just great ideas worth backing.
+                    </p>
+                  </div>
+                  <div className="mt-auto pt-4 border-t border-white/20">
+                    <Link 
+                      to="/backers" 
+                      className="inline-flex items-center gap-2 text-white font-bold hover:text-[#6FD179] transition-colors font-sans text-sm group/link"
+                    >
+                      Explore campaigns <ArrowRight size={16} weight="bold" className="group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Box 3: For Partners */}
-            <div className="group relative rounded-[2rem] p-8 flex flex-col justify-between text-white overflow-hidden shadow-lg min-h-[380px]">
-              <img
-                src="/images/partners_path.jpg"
-                alt="For Partners"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20 transition-opacity duration-300" />
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                  <h3 className="font-heading text-3xl font-medium mb-3 text-white shadow-sm drop-shadow-md">For Partners</h3>
-                  <p className="text-white/95 text-base leading-relaxed mb-8 font-sans drop-shadow-sm">
-                    Join our network of trusted vendors and service providers to support funded creators with zero platform fees.
-                  </p>
-                </div>
-                <div className="mt-auto pt-4 border-t border-white/20">
-                  <Link 
-                    to="/partners" 
-                    className="inline-flex items-center gap-2 text-white font-bold hover:text-[#6FD179] transition-colors font-sans text-sm group/link"
-                  >
-                    Join the network <ArrowRight size={16} weight="bold" className="group-hover/link:translate-x-1 transition-transform" />
-                  </Link>
+            {/* Box 3: For Partners -> Mimi */}
+            <div className="group relative">
+              {/* Peeking Character (Mimi - Bee) */}
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-[68%] z-0 pointer-events-none transition-all duration-500 ease-out md:translate-y-6 md:opacity-0 md:group-hover:-translate-y-[68%] md:group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                <img
+                  src="/characters/bee.svg"
+                  alt="Mimi"
+                  className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain drop-shadow-[0_12px_24px_rgba(8,45,77,0.35)] -rotate-2 transition-transform duration-500 group-hover:rotate-0"
+                />
+              </div>
+
+              {/* Card Body */}
+              <div className="relative z-10 rounded-[2rem] p-8 flex flex-col justify-between text-white overflow-hidden shadow-lg min-h-[380px] bg-[#082D4D]">
+                <img
+                  src="/images/partners_path.jpg"
+                  alt="For Partners"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20 transition-opacity duration-300" />
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <h3 className="font-heading text-3xl font-medium mb-3 text-white shadow-sm drop-shadow-md">For Partners</h3>
+                    <p className="text-white/95 text-base leading-relaxed mb-8 font-sans drop-shadow-sm">
+                      Join our network of trusted vendors and service providers to support funded creators with zero platform fees.
+                    </p>
+                  </div>
+                  <div className="mt-auto pt-4 border-t border-white/20">
+                    <Link 
+                      to="/partners" 
+                      className="inline-flex items-center gap-2 text-white font-bold hover:text-[#6FD179] transition-colors font-sans text-sm group/link"
+                    >
+                      Join the network <ArrowRight size={16} weight="bold" className="group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

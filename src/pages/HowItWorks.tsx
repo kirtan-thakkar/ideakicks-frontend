@@ -70,6 +70,12 @@ const roleJourneys = {
   },
 };
 
+const roleCharacters: Record<string, { name: string; svg: string; rotation: string }> = {
+  creators: { name: "Navi", svg: "/characters/octopus.svg", rotation: "-rotate-3" },
+  backers: { name: "Myrme", svg: "/characters/ant.svg", rotation: "rotate-3" },
+  partners: { name: "Mimi", svg: "/characters/bee.svg", rotation: "-rotate-2" },
+};
+
 const faqItems = [
   { q: "Is ideakicks free for backers?", a: "Yes. Browsing and backing is completely free. We take a platform percentage from creators only on successful campaigns." },
   { q: "What's the platform fee?", a: "We charge a small percentage of successfully raised funds. There are no listing fees or upfront costs." },
@@ -155,47 +161,69 @@ export function HowItWorks() {
             <h2 className="heading-section mb-8">Choose your role</h2>
             
             {/* Roles in Boxes with Small Description */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-y-24 md:gap-6 max-w-5xl mx-auto pt-16 md:pt-20">
               {(Object.keys(roleJourneys) as Array<keyof typeof roleJourneys>).map((roleKey) => {
                 const role = roleJourneys[roleKey];
                 const isSelected = activeRole === roleKey;
+                const charInfo = roleCharacters[roleKey];
+
                 return (
-                  <button
-                    key={roleKey}
-                    type="button"
-                    onClick={() => setActiveRole(roleKey)}
-                    className={`group relative overflow-hidden p-6 sm:p-7 rounded-[1.5rem] text-left transition-all flex flex-col justify-between cursor-pointer min-h-[260px] ${
-                      isSelected
-                        ? "ring-4 ring-[#6FD179] shadow-lg shadow-[#6FD179]/20 scale-[1.02]"
-                        : "border border-[#082D4D]/08 hover:shadow-md"
-                    }`}
-                  >
-                    <img src={role.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="" />
-                    <div className={`absolute inset-0 transition-opacity duration-300 ${
-                      isSelected 
-                        ? "bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20" 
-                        : "bg-gradient-to-t from-[#082D4D]/90 via-[#082D4D]/70 to-[#082D4D]/40 group-hover:from-[#082D4D]/95"
-                    }`} />
-                    
-                    <div className="relative z-10 flex flex-col h-full justify-between">
-                      <div className="flex items-center justify-between mb-4">
-                        <div /> {/* Spacer for flex layout */}
-                        {isSelected && (
-                          <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#6FD179] text-[#082D4D] shadow-sm tracking-wide">
-                            Selected
-                          </span>
-                        )}
+                  <div key={roleKey} className="group relative">
+                    {/* Peeking Character */}
+                    {charInfo && (
+                      <div 
+                        className={`absolute left-1/2 -translate-x-1/2 top-0 pointer-events-none transition-all duration-500 ease-out z-0 ${
+                          isSelected 
+                            ? "-translate-y-[68%] opacity-100" 
+                            : "-translate-y-[68%] opacity-100 md:translate-y-6 md:opacity-0 md:group-hover:-translate-y-[68%] md:group-hover:opacity-100"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        <img
+                          src={charInfo.svg}
+                          alt={charInfo.name}
+                          className={`w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain drop-shadow-[0_12px_24px_rgba(8,45,77,0.35)] ${charInfo.rotation} transition-transform duration-500 group-hover:rotate-0`}
+                        />
                       </div>
-                      <div>
-                        <h3 className="font-heading text-2xl font-medium text-white mb-2 shadow-sm drop-shadow-md">
-                          {role.label}
-                        </h3>
-                        <p className="text-white/95 text-sm leading-relaxed drop-shadow-sm">
-                          {role.shortDesc}
-                        </p>
+                    )}
+
+                    {/* Button Body */}
+                    <button
+                      type="button"
+                      onClick={() => setActiveRole(roleKey)}
+                      className={`relative z-10 w-full overflow-hidden p-6 sm:p-7 rounded-[1.5rem] text-left transition-all flex flex-col justify-between cursor-pointer min-h-[260px] bg-[#082D4D] ${
+                        isSelected
+                          ? "ring-4 ring-[#6FD179] shadow-lg shadow-[#6FD179]/20 scale-[1.02]"
+                          : "border border-[#082D4D]/08 hover:shadow-md"
+                      }`}
+                    >
+                      <img src={role.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="" />
+                      <div className={`absolute inset-0 transition-opacity duration-300 ${
+                        isSelected 
+                          ? "bg-gradient-to-t from-[#082D4D]/95 via-[#082D4D]/70 to-[#082D4D]/20" 
+                          : "bg-gradient-to-t from-[#082D4D]/90 via-[#082D4D]/70 to-[#082D4D]/40 group-hover:from-[#082D4D]/95"
+                      }`} />
+                      
+                      <div className="relative z-10 flex flex-col h-full justify-between">
+                        <div className="flex items-center justify-between mb-4">
+                          <div /> {/* Spacer for flex layout */}
+                          {isSelected && (
+                            <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#6FD179] text-[#082D4D] shadow-sm tracking-wide">
+                              Selected
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-heading text-2xl font-medium text-white mb-2 shadow-sm drop-shadow-md">
+                            {role.label}
+                          </h3>
+                          <p className="text-white/95 text-sm leading-relaxed drop-shadow-sm">
+                            {role.shortDesc}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+                  </div>
                 );
               })}
             </div>
