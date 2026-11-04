@@ -236,153 +236,6 @@ const FAQ_ITEMS = [
   },
 ];
 
-// ─── Holographic Interactive Backer Pass ───────────────────────────────────────
-
-function InteractiveFounderPass({
-  name,
-  selectedProject,
-  queueNumber,
-}: {
-  name: string;
-  selectedProject: ProductionProject | null;
-  queueNumber: number;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotX = -((y - centerY) / centerY) * 12;
-    const rotY = ((x - centerX) / centerX) * 12;
-
-    setRotateX(rotX);
-    setRotateY(rotY);
-    setGlare({
-      x: (x / rect.width) * 100,
-      y: (y / rect.height) * 100,
-      opacity: 0.4,
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-    setGlare((prev) => ({ ...prev, opacity: 0 }));
-  };
-
-  const displayName = name.trim() ? name.toUpperCase() : "YOUR NAME HERE";
-  const passSerial = `IK-2026-${String(queueNumber).padStart(4, "0")}`;
-  const perkLabel = selectedProject ? selectedProject.backerPerks.discount : "FOUNDING BACKER TIER";
-  const projectCode = selectedProject ? selectedProject.shortName.toUpperCase() : "ALL 4 WORKSHOP PROJECTS";
-
-  return (
-    <div style={{ perspective: 1000 }} className="w-full max-w-[420px] mx-auto select-none">
-      <div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-          transition: "transform 0.12s ease-out",
-        }}
-        className="relative aspect-[1.58/1] rounded-[24px] p-6 sm:p-7 bg-[#082D4D] text-white overflow-hidden shadow-[0_24px_50px_-16px_rgba(8,45,77,0.45),0_0_0_1px_rgba(255,255,255,0.12)] border border-[#6FD179]/30"
-      >
-        {/* Holographic Sheen Layer */}
-        <div
-          className="pointer-events-none absolute inset-0 transition-opacity duration-200"
-          style={{
-            background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(111, 209, 121, ${glare.opacity}), rgba(255, 255, 255, ${glare.opacity * 0.7}) 22%, transparent 65%)`,
-            opacity: glare.opacity > 0 ? 1 : 0,
-          }}
-        />
-
-        {/* Ambient background glow accents */}
-        <div className="absolute -right-14 -top-14 w-48 h-48 rounded-full bg-[#6FD179]/15 blur-2xl pointer-events-none" />
-        <div className="absolute -left-10 -bottom-10 w-44 h-44 rounded-full bg-[#0F4C82]/50 blur-2xl pointer-events-none" />
-
-        {/* Top Header: Logo + Chip + Priority Queue */}
-        <div className="relative z-10 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-bold tracking-tight text-white text-base" style={{ fontFamily: CD }}>
-              ideakicks<span className="text-[#6FD179]">.</span>
-            </span>
-            <span className="text-[0.6rem] uppercase tracking-[0.14em] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white/80 border border-white/10">
-              Pass v1.0
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Holographic simulated gold/green hardware chip */}
-            <div className="w-8 h-6 rounded-md bg-gradient-to-br from-[#6FD179] via-[#e2f9e4] to-[#2A7A37] border border-white/40 shadow-inner flex items-center justify-center">
-              <div className="w-4 h-3 border border-[#082D4D]/50 rounded-xs grid grid-cols-2 gap-0.5 opacity-70">
-                <div className="border-r border-b border-[#082D4D]/50" />
-                <div className="border-b border-[#082D4D]/50" />
-                <div className="border-r border-[#082D4D]/50" />
-                <div />
-              </div>
-            </div>
-            <span className="text-[0.65rem] font-bold text-[#6FD179] bg-[#6FD179]/15 border border-[#6FD179]/30 px-2 py-0.5 rounded-full">
-              QUEUE #{queueNumber}
-            </span>
-          </div>
-        </div>
-
-        {/* Middle: Holder Name & Cohort Badge */}
-        <div className="relative z-10 my-4 sm:my-5">
-          <span className="text-[0.62rem] tracking-[0.16em] uppercase text-white/50 block font-mono">
-            AUTHORIZED BACKER HOLDER
-          </span>
-          <h4
-            className="text-lg sm:text-2xl font-bold tracking-wide text-white truncate drop-shadow-sm mt-0.5"
-            style={{ fontFamily: CD }}
-          >
-            {displayName}
-          </h4>
-
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-[0.68rem] px-2.5 py-0.5 rounded-full bg-[#6FD179]/20 text-[#6FD179] font-bold border border-[#6FD179]/40 truncate max-w-[220px]">
-              {projectCode}
-            </span>
-            <span className="text-[0.68rem] text-white/70 font-mono">
-              {perkLabel}
-            </span>
-          </div>
-        </div>
-
-        {/* Bottom Bar: Serial Number & Stylized Barcode */}
-        <div className="relative z-10 pt-3 border-t border-white/10 flex items-end justify-between gap-3 text-xs">
-          <div>
-            <span className="text-[0.58rem] font-mono tracking-widest text-white/40 block">PASS SERIAL</span>
-            <span className="font-mono text-[0.74rem] font-semibold tracking-wider text-white/90">{passSerial}</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 font-mono text-[0.68rem] text-white/60">
-            <div className="flex items-center gap-0.5 h-4 opacity-75">
-              {[3, 1, 4, 2, 5, 2, 4, 1, 3, 2, 5, 1, 3].map((h, i) => (
-                <div key={i} className="w-0.5 bg-white" style={{ height: `${h * 2.8}px` }} />
-              ))}
-            </div>
-            <span className="hidden sm:inline text-[#6FD179] font-bold">READY</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="text-center text-[0.72rem] text-[#6B7681] mt-3 flex items-center justify-center gap-1.5">
-        <Sparkle size={13} className="text-[#2A7A37]" />
-        <span>Interactive 3D pass. Tilt with cursor &amp; updates live as you type.</span>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main Waitlist Component ───────────────────────────────────────────────────
 
 export function Waitlist() {
@@ -815,162 +668,208 @@ export function Waitlist() {
         </section>
       )}
 
-      {/* ── THE RESERVATION STUDIO (Form + Interactive Holographic Pass) ─ */}
-      <section ref={formRef} className="pb-20 sm:pb-28 max-w-[1040px] mx-auto px-6">
-        <div className="bg-white border border-[#0F4C82]/10 rounded-[28px] p-6 sm:p-9 md:p-12 shadow-[0_12px_40px_-16px_rgba(8,45,77,0.12)]">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            
-            {/* Left Column: Interactive 3D Holographic Founder Pass (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <InteractiveFounderPass
-                name={name}
-                selectedProject={selectedProjObj}
-                queueNumber={currentQueueNum}
-              />
-            </div>
+      {/* ── PRIORITY RESERVATION FORM (Clean & Centered) ────────────────── */}
+      <section ref={formRef} className="pb-20 sm:pb-28 max-w-[640px] mx-auto px-6">
+        <div className="bg-white border border-[#0F4C82]/10 rounded-[28px] p-6 sm:p-9 md:p-10 shadow-[0_12px_40px_-16px_rgba(8,45,77,0.12)]">
+          {!submittedData ? (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              <div className="pb-2 border-b border-[#E8EBEE]">
+                <span className="text-[0.7rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37]">
+                  PRIORITY RESERVATION
+                </span>
+                <h3 
+                  className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight mt-0.5"
+                  style={{ fontFamily: CD }}
+                >
+                  {role === "backer"
+                    ? "Reserve early backer access"
+                    : role === "creator"
+                    ? "Apply for founding creator cohort"
+                    : "Join the Guild manufacturing network"}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#6B7681] mt-1">
+                  {role === "backer"
+                    ? `Lock in priority prototype delivery and early pricing for ${
+                        selectedProjectId === "all" ? "all 4 workshop projects" : selectedProjObj?.shortName
+                      }.`
+                    : role === "creator"
+                    ? "Launch with ₹0 platform commission and 48-hour prototype coaching."
+                    : "Connect directly with pre-funded hardware creators seeking production partners."}
+                </p>
+              </div>
 
-            {/* Right Column: Streamlined Input Form (7 cols) */}
-            <div className="lg:col-span-7">
-              {!submittedData ? (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                  <div className="pb-1 border-b border-[#E8EBEE]">
-                    <span className="text-[0.7rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37]">
-                      PRIORITY PASS ALLOCATION
+              {/* Backer Project Selector Pill Row */}
+              {role === "backer" && (
+                <div className="flex flex-col gap-2">
+                  <label className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center justify-between">
+                    <span>Selected Project</span>
+                    <span className="text-[#2A7A37] font-semibold text-[0.68rem]">
+                      {selectedProjectId === "all" ? "All 4 Projects" : selectedProjObj?.shortName}
                     </span>
-                    <h3 
-                      className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight mt-0.5"
-                      style={{ fontFamily: CD }}
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectProject("all")}
+                      className={`px-3 py-2 rounded-xl text-xs font-bold border text-center transition-all cursor-pointer ${
+                        selectedProjectId === "all"
+                          ? "bg-[#082D4D] text-white border-[#082D4D] shadow-xs"
+                          : "bg-[#F7F9FA] text-[#082D4D] border-[#E8EBEE] hover:border-[#082D4D]"
+                      }`}
                     >
-                      {role === "backer"
-                        ? "Reserve your founder backer tier"
-                        : role === "creator"
-                        ? "Apply for founding creator cohort"
-                        : "Join the Guild manufacturing network"}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#6B7681] mt-1">
-                      {role === "backer"
-                        ? `Lock in priority prototype delivery and early pricing for ${
-                            selectedProjectId === "all" ? "all 4 workshop projects" : selectedProjObj?.shortName
-                          }.`
-                        : role === "creator"
-                        ? "Launch with ₹0 platform commission and 48-hour prototype coaching."
-                        : "Connect directly with pre-funded hardware creators seeking production partners."}
+                      ✨ All 4 Projects
+                    </button>
+                    {IN_PRODUCTION_PROJECTS.map((proj) => {
+                      const isSelected = selectedProjectId === proj.id;
+                      return (
+                        <button
+                          key={proj.id}
+                          type="button"
+                          onClick={() => handleSelectProject(proj.id)}
+                          className={`px-3 py-2 rounded-xl text-xs font-bold border text-center transition-all cursor-pointer truncate ${
+                            isSelected
+                              ? "bg-[#6FD179] text-[#082D4D] border-[#6FD179] shadow-xs"
+                              : "bg-[#F7F9FA] text-[#082D4D] border-[#E8EBEE] hover:border-[#082D4D]"
+                          }`}
+                        >
+                          {proj.shortName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectedProjObj && selectedProjectId !== "all" && (
+                    <p className="text-[0.72rem] text-[#2A7A37] font-medium flex items-center gap-1.5 mt-0.5">
+                      <ShieldCheck size={14} weight="fill" />
+                      <span>Includes: {selectedProjObj.backerPerks.discount} ({selectedProjObj.backerPerks.edition})</span>
                     </p>
-                  </div>
-
-                  {/* Name field */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="wl-name" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
-                      <User size={13} className="text-[#0F4C82]" />
-                      Full Name <span className="text-[#C2412D]">*</span>
-                    </label>
-                    <input
-                      id="wl-name"
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Maya Sharma"
-                      className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
-                    />
-                  </div>
-
-                  {/* Email field */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="wl-email" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
-                      <EnvelopeSimple size={13} className="text-[#0F4C82]" />
-                      Email Address <span className="text-[#C2412D]">*</span>
-                    </label>
-                    <input
-                      id="wl-email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@domain.com"
-                      className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
-                    />
-                  </div>
-
-                  {/* Phone number field */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="wl-phone" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
-                      <Phone size={13} className="text-[#0F4C82]" />
-                      Phone / WhatsApp <span className="text-[#C2412D]">*</span>
-                    </label>
-                    <input
-                      id="wl-phone"
-                      type="tel"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 98765 43210"
-                      className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-12 rounded-full font-bold text-sm text-[#082D4D] bg-[#6FD179] hover:bg-[#62c76c] shadow-[0_8px_20px_-6px_rgba(111,209,121,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-1"
-                  >
-                    {isSubmitting ? (
-                      <span>Securing your spot...</span>
-                    ) : (
-                      <>
-                        <span>Claim My Priority Backer Pass</span>
-                        <ArrowRight size={16} weight="bold" />
-                      </>
-                    )}
-                  </button>
-
-                  <div className="flex items-center justify-between text-[0.7rem] text-[#6B7681] pt-1">
-                    <span className="flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-[#2A7A37]" />
-                      <span>Zero spam · Escrow guaranteed access</span>
-                    </span>
-                    <span className="font-mono">Queue #{currentQueueNum}</span>
-                  </div>
-                </form>
-              ) : (
-                /* Confirmed State Ticket */
-                <div className="flex flex-col items-center text-center py-4">
-                  <div className="w-14 h-14 rounded-full bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center mb-4">
-                    <SealCheck size={32} weight="fill" />
-                  </div>
-                  <h4 className="text-2xl font-bold text-[#082D4D]" style={{ fontFamily: CD }}>
-                    You are in the cohort, {submittedData.name}!
-                  </h4>
-                  <p className="text-sm text-[#6B7681] mt-1 max-w-md">
-                    Your spot is locked at <strong className="text-[#082D4D]">Queue #{submittedData.queueNumber}</strong> for{" "}
-                    <strong className="text-[#082D4D]">{submittedData.projectName || "Ideakicks Cohort"}</strong>.
-                  </p>
-
-                  <div className="mt-6 flex flex-col sm:flex-row items-center gap-3 w-full max-w-sm">
-                    <button
-                      type="button"
-                      onClick={copyReferralLink}
-                      className="w-full h-10 rounded-full bg-[#082D4D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
-                    >
-                      {copiedLink ? <Check size={14} /> : <ShareNetwork size={14} />}
-                      <span>{copiedLink ? "Link Copied!" : "Share Waitlist Link"}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={resetForm}
-                      className="w-full h-10 rounded-full border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D] font-bold text-xs transition-colors cursor-pointer"
-                    >
-                      Add Another Pass
-                    </button>
-                  </div>
+                  )}
                 </div>
               )}
+
+              {/* Name field */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="wl-name" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
+                  <User size={13} className="text-[#0F4C82]" />
+                  Full Name <span className="text-[#C2412D]">*</span>
+                </label>
+                <input
+                  id="wl-name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Maya Sharma"
+                  className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
+                />
+              </div>
+
+              {/* Email field */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="wl-email" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
+                  <EnvelopeSimple size={13} className="text-[#0F4C82]" />
+                  Email Address <span className="text-[#C2412D]">*</span>
+                </label>
+                <input
+                  id="wl-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@domain.com"
+                  className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
+                />
+              </div>
+
+              {/* Phone number field */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="wl-phone" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
+                  <Phone size={13} className="text-[#0F4C82]" />
+                  Phone / WhatsApp <span className="text-[#C2412D]">*</span>
+                </label>
+                <input
+                  id="wl-phone"
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+91 98765 43210"
+                  className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
+                />
+              </div>
+
+              {/* Optional note */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="wl-note" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center justify-between">
+                  <span>What excites you most about this project?</span>
+                  <span className="text-[#6B7681] text-[0.65rem] font-normal">Optional</span>
+                </label>
+                <textarea
+                  id="wl-note"
+                  rows={2}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="e.g. Can't wait for offline Matter deadbolt, or eager for planar audio prototype..."
+                  className="rounded-[10px] border border-[#DFE3E7] bg-white p-3 text-xs sm:text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all resize-none"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-12 rounded-full font-bold text-sm text-[#082D4D] bg-[#6FD179] hover:bg-[#62c76c] shadow-[0_8px_20px_-6px_rgba(111,209,121,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-1"
+              >
+                {isSubmitting ? (
+                  <span>Securing your spot...</span>
+                ) : (
+                  <>
+                    <span>Join Priority Waitlist</span>
+                    <ArrowRight size={16} weight="bold" />
+                  </>
+                )}
+              </button>
+
+              <div className="flex items-center justify-between text-[0.7rem] text-[#6B7681] pt-1">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-[#2A7A37]" />
+                  <span>Zero spam · Escrow guaranteed access</span>
+                </span>
+                <span className="font-mono">Queue #{currentQueueNum}</span>
+              </div>
+            </form>
+          ) : (
+            /* Confirmed State Ticket */
+            <div className="flex flex-col items-center text-center py-6">
+              <div className="w-14 h-14 rounded-full bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center mb-4">
+                <SealCheck size={32} weight="fill" />
+              </div>
+              <h4 className="text-2xl sm:text-3xl font-bold text-[#082D4D]" style={{ fontFamily: CD }}>
+                You are in line, {submittedData.name}!
+              </h4>
+              <p className="text-sm text-[#6B7681] mt-2 max-w-md">
+                Your spot is confirmed at <strong className="text-[#082D4D]">Queue #{submittedData.queueNumber}</strong> for{" "}
+                <strong className="text-[#082D4D]">{submittedData.projectName || "Ideakicks Cohort"}</strong>.
+              </p>
+
+              <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full max-w-sm">
+                <button
+                  type="button"
+                  onClick={copyReferralLink}
+                  className="w-full h-11 rounded-full bg-[#082D4D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  {copiedLink ? <Check size={14} /> : <ShareNetwork size={14} />}
+                  <span>{copiedLink ? "Link Copied!" : "Share Waitlist Link"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="w-full h-11 rounded-full border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D] font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Add Another Reservation
+                </button>
+              </div>
             </div>
-
-          </div>
-
+          )}
         </div>
       </section>
 
