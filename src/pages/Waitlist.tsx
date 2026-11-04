@@ -12,6 +12,7 @@ import {
   EnvelopeSimple, 
   Phone, 
   User,
+  Users,
   X,
   Eye,
   RocketLaunch,
@@ -22,6 +23,7 @@ import {
   Buildings
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
+import { ImageWithFallback } from "../components/common/ImageWithFallback";
 import {
   Accordion,
   AccordionItem,
@@ -43,12 +45,18 @@ export interface ProductionProject {
   stage: string;
   statusBadge: string;
   creator: string;
+  creatorAvatar: string;
   location: string;
   image: string;
   icon: any;
   summary: string;
   fullPitch: string;
   tangibleCraft: string;
+  raised: string;
+  goal: string;
+  funded: number;
+  backers: number;
+  timeline: string;
   milestones: { label: string; status: "done" | "in_progress" | "upcoming" }[];
   backerPerks: {
     discount: string;
@@ -60,19 +68,25 @@ export interface ProductionProject {
 const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
   {
     id: "evoluir",
-    name: "Evo-AIR by Evoluir Beauty",
+    name: "Evo-AIR: Handheld Contactless Makeup Micro-Airbrush",
     shortName: "Evoluir (Evo-AIR)",
     tagline: "The Ultimate High-Performance Makeup Airbrush System",
     category: "Beauty & Consumer Hardware",
     stage: "Phase 3: Mould Validation & Pilot Assembly",
     statusBadge: "In Production · 410% Funded",
     creator: "Evoluir Beauty",
+    creatorAvatar: "/campaigns/evo-air/logo.png",
     location: "Ahmedabad, India",
     image: "/campaigns/evo-air/box.png",
     icon: Sparkle,
-    summary: "Patented 0.3mm contactless micro-aero atomization engine. Eliminates makeup sponges and bacteria while cutting product waste by 40%.",
+    summary: "Patented 0.3mm contactless micro-aero atomization engine. Eliminates makeup sponges and bacteria while cutting cosmetic waste by 40%.",
     fullPitch: "For decades, makeup application has remained tied to dirty brushes, sponges that absorb liquid, and unhygienic skin contact. Evo-AIR brings aerospace micro-compression into a sleek, portable handheld airbrush device. Using magnetic snap-in Evo-Fill cartridges, it disperses liquid foundation, serums, and skincare into a breathable micro-mist with salon-grade finish.",
     tangibleCraft: "Micro-Aero compression motor machined to 0.02mm tolerances, USB-C 45-minute fast charge, and proprietary magnetic snap-and-spray cartridge locking.",
+    raised: "₹3,07,500",
+    goal: "₹75,000",
+    funded: 410,
+    backers: 842,
+    timeline: "Batch 01 Dec 2026",
     milestones: [
       { label: "Micro-Aero 0.3mm compression nozzle patented", status: "done" },
       { label: "Magnetic snap-in Evo-Fill cartridge tooling", status: "done" },
@@ -87,19 +101,25 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
   },
   {
     id: "goodknocks",
-    name: "Goodknocks Tactile Entry",
+    name: "Goodknocks: Solid Billet Offline Matter Smart Deadbolt",
     shortName: "Goodknocks",
     tagline: "Minimalist Mechanical Smart Deadbolt with Zero Cloud Dependency",
     category: "Smart Home & Hardware Craft",
-    stage: "Phase 2: CNC Machining & Stress Testing",
-    statusBadge: "In Production · Pre-Launch Beta",
+    stage: "Phase 2: Stress Testing & CNC Milling",
+    statusBadge: "In Production · 260% Funded",
     creator: "Goodknocks Labs",
+    creatorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80",
     location: "Bengaluru, India",
-    image: "/campaigns/scrubbitt/action.jpg",
+    image: "https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=80",
     icon: Lock,
     summary: "Solid billet aerospace aluminum smart lock. Local Matter & Thread mesh, offline cryptographic key exchange, and zero subscription fees.",
     fullPitch: "Smart locks shouldn't be made of creaky plastic or rely on cloud servers that go down when your Wi-Fi hiccups. Goodknocks is CNC-machined from a solid block of 6061-T6 aerospace aluminum. It runs completely offline on Matter and Thread mesh networks, operating with military-grade asymmetric key exchange and kinetic backup power.",
     tangibleCraft: "Bead-blasted matte anodized finish, Swiss-engineered planetary gearbox, tactile mechanical knurled thumbturn with satisfying haptic feedback.",
+    raised: "₹1,95,000",
+    goal: "₹75,000",
+    funded: 260,
+    backers: 520,
+    timeline: "Batch 01 Jan 2027",
     milestones: [
       { label: "CNC milled prototype & planetary gearbox validated", status: "done" },
       { label: "Offline Matter/Thread firmware security audit", status: "done" },
@@ -114,19 +134,25 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
   },
   {
     id: "n-node",
-    name: "N-Node Personal Edge Cluster",
+    name: "N-Node: Silent Extruded Aluminum Edge Cluster & Personal Cloud",
     shortName: "N-Node",
     tagline: "Passively Cooled Modular Private Cloud & Local AI Mesh Computer",
     category: "Edge Computing & Infrastructure",
     stage: "Phase 3: Thermal Tuning & Carrier Assembly",
-    statusBadge: "In Production · Hardware Rev 2",
+    statusBadge: "In Production · 190% Funded",
     creator: "Node Systems Co.",
+    creatorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
     location: "Pune, India",
-    image: "/images/vendor_industrial_design.jpg",
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80",
     icon: Cpu,
     summary: "Silent, zero-fan extruded aluminum edge node. Dual RISC-V/ARM carrier board, hot-swappable NVMe, and private self-hosted cloud.",
     fullPitch: "Take your data back from big cloud providers. N-Node is a compact, silent personal server designed to sit quietly on your desk while hosting your private file vault, local language models, media library, and home automation. Built with an extruded aluminum convection heatsink that requires zero cooling fans.",
     tangibleCraft: "Heavyweight passive finned heatsink casing, dual 2.5GbE Intel Ethernet, quick-release dual NVMe sleds, and open-source hardware schematics.",
+    raised: "₹2,28,000",
+    goal: "₹1,20,000",
+    funded: 190,
+    backers: 412,
+    timeline: "Batch 01 Feb 2027",
     milestones: [
       { label: "Dual-SoC carrier PCB layout & fabrication", status: "done" },
       { label: "Passive thermal convection cooling benchmarked", status: "done" },
@@ -141,19 +167,25 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
   },
   {
     id: "prx",
-    name: "PRX Spatial Audio Wearable",
+    name: "PRX-01: Ultra-Low Latency Planar Magnetic Spatial Headset",
     shortName: "PRX",
     tagline: "Ultra-Low Latency Planar Magnetic Wireless Spatial Headset",
     category: "Acoustic Engineering & Audio",
     stage: "Phase 2: Acoustic Calibration & Driver Tooling",
-    statusBadge: "In Production · Acoustic Tuning",
+    statusBadge: "In Production · 340% Funded",
     creator: "PRX Acoustics",
+    creatorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
     location: "Hyderabad, India",
-    image: "/images/vendor_manufacturing.jpg",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80",
     icon: Headphones,
     summary: "Custom 50mm planar magnetic transducers with 1.2ms ultra-low RF latency and lossless uncompressed 24-bit/96kHz audio.",
     fullPitch: "Audiophiles demand planar magnetic resolution; gamers demand zero latency; creators demand flat, uncolored frequency response. PRX unites all three into a single featherweight titanium frame. With a proprietary 2.4GHz RF uncompressed transceiver, experience 1.2ms latency—completely imperceptible to human ears.",
     tangibleCraft: "50mm sub-micron planar diaphragm, laser-cut titanium spring headband, memory foam protein leather earcups, and CNC volume dial.",
+    raised: "₹2,55,000",
+    goal: "₹75,000",
+    funded: 340,
+    backers: 684,
+    timeline: "Batch 01 Jan 2027",
     milestones: [
       { label: "50mm sub-micron planar magnetic driver designed", status: "done" },
       { label: "1.2ms lossless 2.4GHz RF protocol developed", status: "done" },
@@ -419,26 +451,26 @@ export function Waitlist() {
             </div>
           </div>
 
-          {/* ── BACKER WORKSHOP SHOWCASE: 4 In-Production Projects ────────── */}
+          {/* ── BACKER WORKSHOP SHOWCASE: 4 In-Production Projects (Discover Cards UI) ────────── */}
           {role === "backer" && (
-            <div className="w-full max-w-[960px] mx-auto text-left mb-10 animate-in fade-in zoom-in-95 duration-300">
+            <div className="w-full max-w-[1040px] mx-auto text-left mb-12 animate-in fade-in zoom-in-95 duration-300">
               
-              <div className="bg-white/90 backdrop-blur-md border border-[#E8EBEE] rounded-[24px] p-6 sm:p-8 shadow-[0_4px_24px_-10px_rgba(8,45,77,0.12)]">
+              <div className="bg-white/95 backdrop-blur-md border border-[#0F4C82]/10 rounded-[28px] p-6 sm:p-8 md:p-10 shadow-[0_4px_32px_-12px_rgba(8,45,77,0.12)]">
                 
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 pb-4 border-b border-[#E8EBEE]">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-5 border-b border-[#E8EBEE]">
                   <div>
                     <span className="text-[0.72rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37] flex items-center gap-1.5">
-                      <RocketLaunch size={14} weight="fill" />
-                      Currently in the workshop
+                      <Sparkle size={14} weight="fill" />
+                      In-Production Live Showcase
                     </span>
                     <h3 
-                      className="text-xl sm:text-2xl font-semibold text-[#082D4D] tracking-tight mt-1"
+                      className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight mt-1.5 leading-snug"
                       style={{ fontFamily: CD }}
                     >
-                      Projects in production &amp; development
+                      Choose which project to <em className="italic text-[#6FD179] font-normal">back first.</em>
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#6B7681] mt-0.5">
-                      Select which project you want exclusive early backer perks for, or inspect details below.
+                    <p className="text-xs sm:text-sm text-[#6B7681] mt-1 max-w-xl">
+                      These 4 tangible hardware projects are actively undergoing tooling, PCB testing, and pilot assembly. Select your priority project below for early backer discounts and escrow-protected milestone updates.
                     </p>
                   </div>
 
@@ -446,109 +478,160 @@ export function Waitlist() {
                   <button
                     type="button"
                     onClick={() => handleSelectProject("all")}
-                    className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+                    className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer ${
                       selectedProjectId === "all"
-                        ? "bg-[#E8F8EA] text-[#2A7A37] border-[#6FD179] shadow-xs"
-                        : "bg-white text-[#082D4D] border-[#DFE3E7] hover:border-[#082D4D]"
+                        ? "bg-[#6FD179] text-white border-[#6FD179] shadow-sm"
+                        : "bg-[#F7F9FA] hover:bg-[#E8F8EA] text-[#082D4D] border-[#DFE3E7] hover:border-[#6FD179]"
                     }`}
                   >
-                    {selectedProjectId === "all" && <CheckFat size={13} weight="fill" />}
-                    <span>Back All 4 Projects</span>
+                    {selectedProjectId === "all" && <CheckFat size={14} weight="fill" />}
+                    <span>Back All 4 Projects (Ecosystem Pass)</span>
                   </button>
                 </div>
 
-                {/* 4 Projects Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 4 In-Production Projects Grid (Exact Discover Card Design) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7">
                   {IN_PRODUCTION_PROJECTS.map((proj) => {
                     const isSelected = selectedProjectId === proj.id;
-                    const IconComp = proj.icon;
+                    const pct = Math.min(proj.funded, 100);
 
                     return (
-                      <div
+                      <article
                         key={proj.id}
-                        className={`group relative rounded-[16px] p-4 sm:p-5 border transition-all duration-200 flex flex-col justify-between ${
+                        className={`group flex flex-col rounded-2xl overflow-hidden bg-white border transition-all duration-300 relative ${
                           isSelected
-                            ? "bg-white border-[#6FD179] ring-2 ring-[#6FD179]/40 shadow-[0_8px_20px_-8px_rgba(111,209,121,0.3)]"
-                            : "bg-[#F7F9FA] hover:bg-white border-[#E8EBEE] hover:border-[#082D4D]/25 shadow-xs"
+                            ? "border-[#6FD179] ring-2 ring-[#6FD179]/50 shadow-[0_12px_36px_-6px_rgba(111,209,121,0.32)] -translate-y-1"
+                            : "border-[#0F4C82]/10 shadow-[0_1px_12px_rgba(8,45,77,0.05)] hover:shadow-[0_10px_34px_rgba(8,45,77,0.12)] hover:-translate-y-1.5"
                         }`}
                       >
-                        {/* Top row: badge + category */}
-                        <div>
-                          <div className="flex items-center justify-between gap-2 mb-2.5">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[0.68rem] font-bold bg-[#E8F8EA] text-[#2A7A37] border border-[#6FD179]/30">
+                        {/* Selected Indicator Pill */}
+                        {isSelected && (
+                          <div className="absolute top-3 left-3 z-20 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.72rem] font-bold bg-[#6FD179] text-white shadow-md">
+                            <Check size={13} weight="bold" />
+                            <span>Selected for Waitlist</span>
+                          </div>
+                        )}
+
+                        {/* Image Container with 16:10 aspect ratio matching Explore.tsx */}
+                        <div className="relative overflow-hidden aspect-[16/10] bg-[#082D4D]/05">
+                          <ImageWithFallback
+                            src={proj.image}
+                            alt={proj.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/65 via-[#082D4D]/10 to-transparent" />
+
+                          {/* Top-Right Production Badge */}
+                          <div className="absolute top-3 right-3 z-10">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.68rem] font-bold bg-white/95 backdrop-blur-md text-[#2A7A37] border border-[#6FD179]/40 shadow-xs">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A37] animate-pulse" />
                               {proj.statusBadge}
                             </span>
-                            <span className="text-[0.7rem] font-medium text-[#6B7681]">
-                              {proj.category}
+                          </div>
+
+                          {/* Floating Creator Avatar & Creator Name (Bottom-Left) */}
+                          <div className="absolute bottom-3 left-3.5 z-10 flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-white flex-shrink-0 bg-white shadow-xs">
+                              <ImageWithFallback src={proj.creatorAvatar} alt={proj.creator} className="w-full h-full object-cover" />
+                            </div>
+                            <span className="text-white text-[0.75rem] font-medium drop-shadow-md">
+                              {proj.creator}
                             </span>
                           </div>
+                        </div>
 
-                          {/* Title + icon */}
-                          <div className="flex items-start gap-3 mb-2">
-                            <div className="w-9 h-9 rounded-xl bg-white border border-[#E8EBEE] flex items-center justify-center text-[#0F4C82] shadow-xs shrink-0 mt-0.5">
-                              <IconComp size={18} weight="bold" />
-                            </div>
-                            <div>
-                              <h4 
-                                className="text-base sm:text-lg font-semibold text-[#082D4D] leading-tight group-hover:text-[#0F4C82] transition-colors"
-                                style={{ fontFamily: CD }}
-                              >
-                                {proj.name}
-                              </h4>
-                              <p className="text-xs text-[#082D4D]/60 mt-0.5">
-                                by {proj.creator} · {proj.location}
-                              </p>
-                            </div>
+                        {/* Content Body matching Explore.tsx */}
+                        <div className="flex flex-1 flex-col p-5 sm:p-6">
+                          <div className="flex items-center justify-between gap-2 mb-1.5 text-[0.7rem]">
+                            <span className="text-[#6FD179] font-bold uppercase tracking-[0.08em]">{proj.category}</span>
+                            <span className="text-[#082D4D]/45 font-medium">{proj.location}</span>
                           </div>
 
-                          {/* Summary pitch */}
-                          <p className="text-xs text-[#6B7681] leading-relaxed mb-4 line-clamp-2">
+                          <h3
+                            className="text-[#082D4D] leading-snug mb-1 line-clamp-2"
+                            style={{ fontFamily: CD, fontSize: "1.0625rem", fontWeight: 600 }}
+                          >
+                            {proj.name}
+                          </h3>
+                          <p className="mb-2 text-[0.75rem] text-[#082D4D]/45">by {proj.creator}</p>
+
+                          <p className="text-xs text-[#082D4D]/70 mb-4 line-clamp-2 leading-relaxed">
                             {proj.summary}
                           </p>
-                        </div>
 
-                        {/* Bottom action row: Inspect details + Select button */}
-                        <div className="flex items-center justify-between gap-2 pt-3 border-t border-[#E8EBEE]">
-                          <button
-                            type="button"
-                            onClick={() => setActiveModalProject(proj)}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0F4C82] hover:text-[#082D4D] hover:underline cursor-pointer"
-                          >
-                            <Eye size={14} />
-                            <span>View details &amp; perks</span>
-                          </button>
+                          {/* Raised vs Goal & Percentage */}
+                          <div className="mt-auto pt-3 border-t border-[#082D4D]/06">
+                            <div className="mb-2 flex items-end justify-between gap-3">
+                              <div>
+                                <p className="text-base font-bold text-[#082D4D]">{proj.raised}</p>
+                                <p className="text-[0.7rem] text-[#082D4D]/45">pledged of {proj.goal}</p>
+                              </div>
+                              <span className="text-[0.8rem] font-bold text-[#6FD179]">{proj.funded}%</span>
+                            </div>
 
-                          <button
-                            type="button"
-                            onClick={() => handleSelectProject(proj.id)}
-                            className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                              isSelected
-                                ? "bg-[#082D4D] text-white shadow-xs"
-                                : "bg-white border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D]"
-                            }`}
-                          >
-                            {isSelected ? (
-                              <>
-                                <Check size={13} weight="bold" />
-                                <span>Selected</span>
-                              </>
-                            ) : (
-                              <span>Select project</span>
-                            )}
-                          </button>
+                            {/* Progress Bar */}
+                            <div className="h-2 bg-[#082D4D]/08 rounded-full overflow-hidden mb-3">
+                              <div
+                                className="h-full bg-[#6FD179] rounded-full transition-all duration-500"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+
+                            {/* Meta row: Backers + Timeline */}
+                            <div className="flex items-center justify-between text-[0.72rem] text-[#082D4D]/50 mb-4">
+                              <span className="flex items-center gap-1.5 font-medium">
+                                <Users size={12} className="text-[#0F4C82]" />
+                                {proj.backers.toLocaleString()} backers
+                              </span>
+                              <span className="flex items-center gap-1.5 font-medium">
+                                <Clock size={12} className="text-[#0F4C82]" />
+                                {proj.timeline}
+                              </span>
+                            </div>
+
+                            {/* Action Row: Quick Preview + Back Project Button */}
+                            <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-[#082D4D]/06">
+                              <button
+                                type="button"
+                                onClick={() => setActiveModalProject(proj)}
+                                className="h-10 rounded-xl border border-[#0F4C82]/15 bg-white hover:bg-[#F0F6FA] text-[#0F4C82] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                              >
+                                <Eye size={14} />
+                                <span>Quick Preview</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleSelectProject(proj.id)}
+                                className={`h-10 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                  isSelected
+                                    ? "bg-[#6FD179] text-white shadow-xs hover:bg-[#62c76c]"
+                                    : "bg-[#082D4D] hover:bg-[#0c3c64] text-white"
+                                }`}
+                              >
+                                {isSelected ? (
+                                  <>
+                                    <Check size={14} weight="bold" />
+                                    <span>Selected</span>
+                                  </>
+                                ) : (
+                                  <span>Back Project</span>
+                                )}
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      </article>
                     );
                   })}
                 </div>
 
-                {/* Backer Banner Hint */}
-                <div className="mt-5 p-3 rounded-[12px] bg-[#E8F8EA]/60 border border-[#6FD179]/40 flex items-center justify-between gap-3 text-xs text-[#2A7A37]">
+                {/* Backer Banner Hint & Proceed Button */}
+                <div className="mt-7 p-3.5 sm:p-4 rounded-[14px] bg-[#E8F8EA]/70 border border-[#6FD179]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#2A7A37]">
                   <span className="flex items-center gap-2">
-                    <ShieldCheck size={16} weight="fill" className="shrink-0" />
+                    <ShieldCheck size={18} weight="fill" className="shrink-0" />
                     <span>
-                      Currently selected for early access:{" "}
+                      Selected for early access:{" "}
                       <strong className="text-[#082D4D]">
                         {selectedProjectId === "all"
                           ? "All 4 Projects (Ecosystem Backer Pass)"
@@ -556,9 +639,16 @@ export function Waitlist() {
                       </strong>
                     </span>
                   </span>
-                  <span className="hidden sm:inline text-[0.72rem] text-[#6B7681]">
-                    You can change or inspect details anytime
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }}
+                    className="font-bold text-[#0F4C82] hover:text-[#082D4D] hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+                  >
+                    <span>Proceed to reservation form</span>
+                    <ArrowRight size={13} weight="bold" />
+                  </button>
                 </div>
 
               </div>
@@ -832,31 +922,62 @@ export function Waitlist() {
             className="relative w-full max-w-2xl bg-white rounded-[24px] shadow-2xl border border-[#E8EBEE] max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="p-6 pb-4 border-b border-[#E8EBEE] flex items-start justify-between gap-4 bg-[#F7F9FA]">
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[0.7rem] font-bold bg-[#E8F8EA] text-[#2A7A37] border border-[#6FD179]/30 mb-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A37] animate-pulse" />
-                  {activeModalProject.statusBadge}
-                </span>
-                <h3 
-                  className="text-2xl font-semibold text-[#082D4D] leading-tight"
-                  style={{ fontFamily: CD }}
+            {/* Modal Image Hero Banner */}
+            <div className="relative aspect-[21/9] sm:aspect-[24/9] w-full overflow-hidden bg-[#082D4D]/05 border-b border-[#E8EBEE]">
+              <ImageWithFallback
+                src={activeModalProject.image}
+                alt={activeModalProject.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/80 via-[#082D4D]/25 to-transparent" />
+              
+              <div className="absolute top-4 right-4 z-10">
+                <button
+                  type="button"
+                  onClick={() => setActiveModalProject(null)}
+                  className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md border border-white hover:bg-white flex items-center justify-center text-[#082D4D] cursor-pointer transition-colors shadow-sm"
                 >
-                  {activeModalProject.name}
-                </h3>
-                <p className="text-xs sm:text-sm text-[#6B7681] mt-1">
-                  {activeModalProject.tagline} · by <strong className="text-[#082D4D]">{activeModalProject.creator}</strong> ({activeModalProject.location})
-                </p>
+                  <X size={16} weight="bold" />
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setActiveModalProject(null)}
-                className="w-8 h-8 rounded-full bg-white border border-[#DFE3E7] hover:border-[#082D4D] flex items-center justify-center text-[#082D4D] cursor-pointer transition-colors shrink-0"
+              <div className="absolute bottom-3 left-4 right-4 z-10 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-white flex-shrink-0 bg-white shadow-xs">
+                    <ImageWithFallback src={activeModalProject.creatorAvatar} alt={activeModalProject.creator} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <span className="text-white text-xs font-semibold drop-shadow-sm block">{activeModalProject.creator}</span>
+                    <span className="text-white/80 text-[0.68rem] drop-shadow-sm">{activeModalProject.location}</span>
+                  </div>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.68rem] font-bold bg-[#6FD179] text-[#082D4D] shadow-sm">
+                  {activeModalProject.statusBadge}
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Header */}
+            <div className="p-6 pb-4 border-b border-[#E8EBEE] bg-[#F7F9FA]">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#6FD179]">
+                  {activeModalProject.category}
+                </span>
+                <span className="text-[#082D4D]/30">•</span>
+                <span className="text-[0.7rem] font-medium text-[#082D4D]/60">
+                  {activeModalProject.stage}
+                </span>
+              </div>
+              <h3 
+                className="text-2xl font-semibold text-[#082D4D] leading-tight"
+                style={{ fontFamily: CD }}
               >
-                <X size={16} weight="bold" />
-              </button>
+                {activeModalProject.name}
+              </h3>
+              <p className="text-xs sm:text-sm text-[#6B7681] mt-1">
+                {activeModalProject.tagline}
+              </p>
             </div>
 
             {/* Modal Scrollable Body */}
