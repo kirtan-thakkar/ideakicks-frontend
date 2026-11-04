@@ -1,26 +1,29 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
+import { motion, AnimatePresence } from "motion/react";
 import { 
   ArrowRight, 
-  CheckCircle, 
-  ShieldCheck, 
-  Sparkle, 
-  Wrench, 
-  Copy, 
   Check, 
   Clock, 
   EnvelopeSimple, 
   Phone, 
-  User,
-  Users,
-  X,
-  Eye,
-  RocketLaunch,
-  Cpu,
-  Lock,
-  Headphones,
-  CheckFat,
-  Buildings
+  User, 
+  Users, 
+  X, 
+  Eye, 
+  RocketLaunch, 
+  Cpu, 
+  Lock, 
+  Headphones, 
+  CheckFat, 
+  CaretLeft, 
+  CaretRight, 
+  Sparkle, 
+  ShieldCheck, 
+  Wrench, 
+  Copy, 
+  SealCheck,
+  ShareNetwork
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { ImageWithFallback } from "../components/common/ImageWithFallback";
@@ -34,7 +37,7 @@ import {
 const CD = "'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 const SAT = "'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
-type PersonaRole = "creator" | "backer" | "partner";
+type PersonaRole = "backer" | "creator" | "partner";
 
 export interface ProductionProject {
   id: "evoluir" | "goodknocks" | "n-node" | "prx";
@@ -71,8 +74,8 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
     name: "Evo-AIR: Handheld Contactless Makeup Micro-Airbrush",
     shortName: "Evoluir (Evo-AIR)",
     tagline: "The Ultimate High-Performance Makeup Airbrush System",
-    category: "Beauty & Consumer Hardware",
-    stage: "Phase 3: Mould Validation & Pilot Assembly",
+    category: "Beauty Tech & Hardware",
+    stage: "Phase 3: Mould Validation",
     statusBadge: "In Production · 410% Funded",
     creator: "Evoluir Beauty",
     creatorAvatar: "/campaigns/evo-air/logo.png",
@@ -104,8 +107,8 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
     name: "Goodknocks: Solid Billet Offline Matter Smart Deadbolt",
     shortName: "Goodknocks",
     tagline: "Minimalist Mechanical Smart Deadbolt with Zero Cloud Dependency",
-    category: "Smart Home & Hardware Craft",
-    stage: "Phase 2: Stress Testing & CNC Milling",
+    category: "Smart Home & Hardware",
+    stage: "Phase 2: CNC Stress Testing",
     statusBadge: "In Production · 260% Funded",
     creator: "Goodknocks Labs",
     creatorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80",
@@ -137,8 +140,8 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
     name: "N-Node: Silent Extruded Aluminum Edge Cluster & Personal Cloud",
     shortName: "N-Node",
     tagline: "Passively Cooled Modular Private Cloud & Local AI Mesh Computer",
-    category: "Edge Computing & Infrastructure",
-    stage: "Phase 3: Thermal Tuning & Carrier Assembly",
+    category: "Edge Compute & Hardware",
+    stage: "Phase 3: Thermal Tuning",
     statusBadge: "In Production · 190% Funded",
     creator: "Node Systems Co.",
     creatorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
@@ -171,7 +174,7 @@ const IN_PRODUCTION_PROJECTS: ProductionProject[] = [
     shortName: "PRX",
     tagline: "Ultra-Low Latency Planar Magnetic Wireless Spatial Headset",
     category: "Acoustic Engineering & Audio",
-    stage: "Phase 2: Acoustic Calibration & Driver Tooling",
+    stage: "Phase 2: Driver Tooling",
     statusBadge: "In Production · 340% Funded",
     creator: "PRX Acoustics",
     creatorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
@@ -216,37 +219,175 @@ const STORAGE_KEY = "ideakicks_waitlist";
 
 const FAQ_ITEMS = [
   {
-    q: "When will early access begin?",
-    a: "We are admitting waitlist members in batches beginning Q4 2026. Waitlist priority is ordered by registration timestamp, so earlier registrations receive access first.",
+    q: "When will priority early access unlock?",
+    a: "We admit waitlist members in batches beginning Q4 2026. Access is ordered strictly by registration queue number, meaning earlier reservations lock in their batch delivery date first.",
   },
   {
-    q: "How does project-specific early access work for backers?",
-    a: "When you select a project (like Evoluir, Goodknocks, N-Node, or PRX), you are placed on that project's private backer cohort. You receive first-look prototype updates, production milestone alerts, and priority access to limited Super Early Bird discount tiers.",
+    q: "How does project-specific priority work for backers?",
+    a: "When you select a project (such as Evo-AIR, Goodknocks, N-Node, or PRX), you are reserved a spot in that specific campaign's Super Early Bird discount tier (up to 40% off) and receive private weekly prototyping logs.",
   },
   {
-    q: "What are the qualifications to launch as a creator?",
-    a: "Creators must have a functional prototype, CAD drawings, or clear technical proof-of-concept. Ideakicks does not permit render-only concepts or unverified claims.",
+    q: "How does Ideakicks Milestone Escrow safeguard pledges?",
+    a: "Unlike traditional crowdfunding platforms that release 100% of capital immediately upon campaign close, Ideakicks locks backer pledges in an audited escrow account. Funds disburse in phases only after verified production milestones.",
   },
   {
-    q: "What privileges do founding cohort members receive?",
-    a: "Founding creators receive 0% platform commission on their first campaign, 48-hour pitch coaching, and direct access to vetted manufacturing suppliers. Early backers get priority pledge access.",
-  },
-  {
-    q: "How does milestone escrow protect backer pledges?",
-    a: "Unlike traditional platforms that disburse 100% of funds immediately, Ideakicks holds capital in escrow. Funds are disbursed in tranches as creators provide verified milestone updates.",
-  },
-  {
-    q: "Can international founders and backers participate?",
-    a: "Yes. While founded in India, Ideakicks supports cross-border backing, global currency processing, and international logistics partnerships.",
-  },
-  {
-    q: "How will I know when my early access invitation is ready?",
-    a: "We will notify you via email and send your invitation code directly to the phone number you provided when your cohort opens.",
+    q: "What privileges do founding creators receive?",
+    a: "Verified founding creators launch at 0% platform commission, receive 48-hour 1-on-1 pitch and campaign coaching, and get matched directly with vetted manufacturing suppliers in The Guild.",
   },
 ];
 
+// ─── Holographic Interactive Backer Pass ───────────────────────────────────────
+
+function InteractiveFounderPass({
+  name,
+  selectedProject,
+  queueNumber,
+}: {
+  name: string;
+  selectedProject: ProductionProject | null;
+  queueNumber: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotX = -((y - centerY) / centerY) * 12;
+    const rotY = ((x - centerX) / centerX) * 12;
+
+    setRotateX(rotX);
+    setRotateY(rotY);
+    setGlare({
+      x: (x / rect.width) * 100,
+      y: (y / rect.height) * 100,
+      opacity: 0.4,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+    setGlare((prev) => ({ ...prev, opacity: 0 }));
+  };
+
+  const displayName = name.trim() ? name.toUpperCase() : "YOUR NAME HERE";
+  const passSerial = `IK-2026-${String(queueNumber).padStart(4, "0")}`;
+  const perkLabel = selectedProject ? selectedProject.backerPerks.discount : "FOUNDING BACKER TIER";
+  const projectCode = selectedProject ? selectedProject.shortName.toUpperCase() : "ALL 4 WORKSHOP PROJECTS";
+
+  return (
+    <div style={{ perspective: 1000 }} className="w-full max-w-[420px] mx-auto select-none">
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+          transition: "transform 0.12s ease-out",
+        }}
+        className="relative aspect-[1.58/1] rounded-[24px] p-6 sm:p-7 bg-[#082D4D] text-white overflow-hidden shadow-[0_24px_50px_-16px_rgba(8,45,77,0.45),0_0_0_1px_rgba(255,255,255,0.12)] border border-[#6FD179]/30"
+      >
+        {/* Holographic Sheen Layer */}
+        <div
+          className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+          style={{
+            background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(111, 209, 121, ${glare.opacity}), rgba(255, 255, 255, ${glare.opacity * 0.7}) 22%, transparent 65%)`,
+            opacity: glare.opacity > 0 ? 1 : 0,
+          }}
+        />
+
+        {/* Ambient background glow accents */}
+        <div className="absolute -right-14 -top-14 w-48 h-48 rounded-full bg-[#6FD179]/15 blur-2xl pointer-events-none" />
+        <div className="absolute -left-10 -bottom-10 w-44 h-44 rounded-full bg-[#0F4C82]/50 blur-2xl pointer-events-none" />
+
+        {/* Top Header: Logo + Chip + Priority Queue */}
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="font-bold tracking-tight text-white text-base" style={{ fontFamily: CD }}>
+              ideakicks<span className="text-[#6FD179]">.</span>
+            </span>
+            <span className="text-[0.6rem] uppercase tracking-[0.14em] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white/80 border border-white/10">
+              Pass v1.0
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Holographic simulated gold/green hardware chip */}
+            <div className="w-8 h-6 rounded-md bg-gradient-to-br from-[#6FD179] via-[#e2f9e4] to-[#2A7A37] border border-white/40 shadow-inner flex items-center justify-center">
+              <div className="w-4 h-3 border border-[#082D4D]/50 rounded-xs grid grid-cols-2 gap-0.5 opacity-70">
+                <div className="border-r border-b border-[#082D4D]/50" />
+                <div className="border-b border-[#082D4D]/50" />
+                <div className="border-r border-[#082D4D]/50" />
+                <div />
+              </div>
+            </div>
+            <span className="text-[0.65rem] font-bold text-[#6FD179] bg-[#6FD179]/15 border border-[#6FD179]/30 px-2 py-0.5 rounded-full">
+              QUEUE #{queueNumber}
+            </span>
+          </div>
+        </div>
+
+        {/* Middle: Holder Name & Cohort Badge */}
+        <div className="relative z-10 my-4 sm:my-5">
+          <span className="text-[0.62rem] tracking-[0.16em] uppercase text-white/50 block font-mono">
+            AUTHORIZED BACKER HOLDER
+          </span>
+          <h4
+            className="text-lg sm:text-2xl font-bold tracking-wide text-white truncate drop-shadow-sm mt-0.5"
+            style={{ fontFamily: CD }}
+          >
+            {displayName}
+          </h4>
+
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[0.68rem] px-2.5 py-0.5 rounded-full bg-[#6FD179]/20 text-[#6FD179] font-bold border border-[#6FD179]/40 truncate max-w-[220px]">
+              {projectCode}
+            </span>
+            <span className="text-[0.68rem] text-white/70 font-mono">
+              {perkLabel}
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Bar: Serial Number & Stylized Barcode */}
+        <div className="relative z-10 pt-3 border-t border-white/10 flex items-end justify-between gap-3 text-xs">
+          <div>
+            <span className="text-[0.58rem] font-mono tracking-widest text-white/40 block">PASS SERIAL</span>
+            <span className="font-mono text-[0.74rem] font-semibold tracking-wider text-white/90">{passSerial}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 font-mono text-[0.68rem] text-white/60">
+            <div className="flex items-center gap-0.5 h-4 opacity-75">
+              {[3, 1, 4, 2, 5, 2, 4, 1, 3, 2, 5, 1, 3].map((h, i) => (
+                <div key={i} className="w-0.5 bg-white" style={{ height: `${h * 2.8}px` }} />
+              ))}
+            </div>
+            <span className="hidden sm:inline text-[#6FD179] font-bold">READY</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center text-[0.72rem] text-[#6B7681] mt-3 flex items-center justify-center gap-1.5">
+        <Sparkle size={13} className="text-[#2A7A37]" />
+        <span>Interactive 3D pass. Tilt with cursor &amp; updates live as you type.</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Waitlist Component ───────────────────────────────────────────────────
+
 export function Waitlist() {
   const [role, setRole] = useState<PersonaRole>("backer");
+  const [activeSpotlightIdx, setActiveSpotlightIdx] = useState(0);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("all");
   const [activeModalProject, setActiveModalProject] = useState<ProductionProject | null>(null);
 
@@ -254,27 +395,18 @@ export function Waitlist() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
-  const [agreed, setAgreed] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedData, setSubmittedData] = useState<WaitlistEntry | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const formRef = useRef<HTMLDivElement>(null);
 
-  // Load existing submission if user already signed up on this device
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed: WaitlistEntry[] = JSON.parse(stored);
-        if (parsed.length > 0) {
-          // Keep in storage
-        }
-      }
-    } catch {
-      // Ignore localStorage errors
-    }
-  }, []);
+  const currentSpotlight = IN_PRODUCTION_PROJECTS[activeSpotlightIdx];
+  const selectedProjObj = IN_PRODUCTION_PROJECTS.find((p) => p.id === selectedProjectId) || null;
+
+  // Queue calculation
+  const baseQueue = 142;
+  const currentQueueNum = baseQueue + 1;
 
   const handleSelectProject = (projectId: string) => {
     setSelectedProjectId(projectId);
@@ -316,15 +448,10 @@ export function Waitlist() {
     setIsSubmitting(true);
 
     try {
-      // Fetch or initialize stored entries
       const stored = localStorage.getItem(STORAGE_KEY);
       const existing: WaitlistEntry[] = stored ? JSON.parse(stored) : [];
-      
-      // Calculate queue number
-      const baseQueue = 142;
       const queueNumber = baseQueue + existing.length + 1;
 
-      const selectedProjObj = IN_PRODUCTION_PROJECTS.find((p) => p.id === selectedProjectId);
       const projectName = role === "backer" 
         ? (selectedProjectId === "all" ? "All 4 Projects (Ecosystem Backer)" : selectedProjObj?.shortName || "Curated Projects")
         : undefined;
@@ -341,47 +468,37 @@ export function Waitlist() {
         queueNumber,
       };
 
-      // Simulate a quick network validation for smooth UX
-      await new Promise((r) => setTimeout(r, 600));
+      const updated = [newEntry, ...existing];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
-      existing.push(newEntry);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-
-      setSubmittedData(newEntry);
-      toast.success("Welcome aboard! You've secured your early access spot.");
-
-      // Confetti burst on success
+      // Trigger Confetti Celebration
       try {
         const confettiModule = await import("canvas-confetti");
-        const confetti = confettiModule.default || confettiModule;
-        confetti({
-          particleCount: 85,
-          spread: 75,
+        confettiModule.default({
+          particleCount: 80,
+          spread: 70,
           origin: { y: 0.6 },
-          colors: ["#6FD179", "#082D4D", "#0F4C82", "#9DE8CC", "#6CC3EA"],
+          colors: ["#6FD179", "#082D4D", "#0F4C82", "#2A7A37"],
         });
       } catch {
-        // Fallback gracefully
+        // Ignore confetti error
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong. Please try again.");
+
+      setSubmittedData(newEntry);
+      toast.success("Priority reservation confirmed! Welcome to Ideakicks.");
+    } catch {
+      toast.error("Something went wrong saving your reservation. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const copyReferralLink = () => {
-    const link = `${window.location.origin}/waitlist?ref=${encodeURIComponent(
-      submittedData?.name || "early-access"
-    )}`;
-    navigator.clipboard.writeText(link).then(() => {
-      setCopiedLink(true);
-      toast.success("Referral link copied to clipboard!");
-      setTimeout(() => setCopiedLink(false), 2400);
-    }).catch(() => {
-      toast.error("Could not copy link automatically.");
-    });
+    const url = window.location.origin + "/waitlist";
+    navigator.clipboard.writeText(url);
+    setCopiedLink(true);
+    toast.success("Waitlist invite link copied to clipboard!");
+    setTimeout(() => setCopiedLink(false), 2500);
   };
 
   const resetForm = () => {
@@ -393,300 +510,352 @@ export function Waitlist() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#33424F] selection:bg-[#6FD179]/30" style={{ fontFamily: SAT }}>
-      {/* ── Signature Sky Gradient Hero ───────────────────────────────────── */}
-      <section 
-        className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28 border-b border-[#E8EBEE]"
-        style={{
-          background: `
-            radial-gradient(55% 70% at 22% 18%, #9de8cc 0%, rgba(157, 232, 204, 0) 70%),
-            radial-gradient(50% 60% at 92% 58%, #6cc3ea 0%, rgba(108, 195, 234, 0) 70%),
-            linear-gradient(180deg, #c9f0e6 0%, #e6f7f6 55%, #ffffff 100%)
-          `
-        }}
-      >
-        <div className="max-w-[1120px] mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+    <div className="min-h-screen bg-white text-[#082D4D]" style={{ fontFamily: SAT }}>
+      
+      {/* ── Hero Section (Atmospheric & Kinetic) ───────────────────────── */}
+      <section className="relative overflow-hidden pt-32 pb-16 sm:pb-20 text-center">
+        {/* Soft background aura */}
+        <div 
+          className="pointer-events-none absolute inset-x-0 -top-24 h-[480px] bg-gradient-to-b from-[#E8F8EA]/40 via-[#F7F9FA]/60 to-transparent blur-3xl -z-10"
+          aria-hidden="true" 
+        />
+
+        <div className="max-w-[840px] mx-auto px-6">
           
-          {/* Clash Display Headline with exactly one italic Spark word */}
-          <h1 
-            className="text-[2.75rem] sm:text-[3.5rem] md:text-[4.25rem] lg:text-[4.75rem] font-semibold text-[#082D4D] leading-[1.06] tracking-[-0.025em] max-w-[20ch] mb-6"
+          {/* Live Status Pill with pulse */}
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#DFE3E7] shadow-xs text-xs font-semibold text-[#082D4D] mb-6"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6FD179] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2A7A37]" />
+            </span>
+            <span>Batch 01 Priority Queue · 1,428 Makers &amp; Backers Live</span>
+          </motion.div>
+
+          {/* Minimalist Editorial Headline */}
+          <motion.h1 
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#082D4D] tracking-tight leading-[1.08] max-w-[20ch] mx-auto"
             style={{ fontFamily: CD }}
           >
-            Be first in <em className="italic text-[#6FD179] font-normal">line.</em>
-          </h1>
+            Back tangible craft before it hits the <em className="italic text-[#6FD179] font-normal">world.</em>
+          </motion.h1>
 
-          {/* Subtitle from Ideakicks Brand Guidelines Foundations */}
-          <p className="text-base sm:text-lg md:text-xl text-[#33424F] max-w-[62ch] leading-relaxed mb-10">
-            A dependable way for ideas to find backing through transparent goals, 
-            structured progress milestones, and community-driven validation. Join the waitlist 
-            to secure priority access before public launch.
-          </p>
+          <motion.p 
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-base sm:text-lg text-[#6B7681] max-w-[50ch] mx-auto mt-4 leading-relaxed"
+          >
+            A curated launchpad for physical hardware and tangible design. Claim your founder pass below for verified prototype milestones and early cohort pricing.
+          </motion.p>
 
-          {/* ── Interactive Role Switcher ─────────────────────────────────── */}
-          <div className="w-full max-w-[540px] mb-8">
-            <div className="inline-flex p-1.5 rounded-full bg-white/80 backdrop-blur-md border border-[#E8EBEE] shadow-sm gap-1 w-full" role="tablist">
+          {/* Fluid Persona Pill Switcher with Spring Animation */}
+          <div className="mt-8 flex justify-center">
+            <div className="inline-flex p-1.5 rounded-full bg-[#F0F4F8] border border-[#DFE3E7] shadow-xs">
               {(
                 [
-                  { id: "backer", label: "For Backers", sub: "Explore 4 in-work projects" },
-                  { id: "creator", label: "For Creators", sub: "₹0 fee founding launch" },
-                  { id: "partner", label: "For Partners", sub: "Join the Guild network" },
+                  { id: "backer", label: "For Backers", sub: "Explore Projects" },
+                  { id: "creator", label: "For Creators", sub: "0% Commission" },
+                  { id: "partner", label: "For Guild Partners", sub: "Supply Chain" },
                 ] as const
-              ).map((item) => {
-                const active = role === item.id;
+              ).map((tab) => {
+                const isActive = role === tab.id;
                 return (
                   <button
-                    key={item.id}
+                    key={tab.id}
                     type="button"
-                    onClick={() => setRole(item.id)}
-                    className={`flex-1 flex flex-col items-center justify-center py-2.5 px-3 rounded-full transition-all duration-200 cursor-pointer ${
-                      active
-                        ? "bg-[#082D4D] text-white shadow-md"
-                        : "text-[#6B7681] hover:text-[#082D4D] hover:bg-white/50"
-                    }`}
+                    onClick={() => setRole(tab.id)}
+                    className="relative px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-colors cursor-pointer z-10"
                   >
-                    <span className="text-xs sm:text-sm font-bold">{item.label}</span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeRolePill"
+                        className="absolute inset-0 rounded-full bg-[#082D4D] shadow-md -z-10"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    <span className={isActive ? "text-white" : "text-[#6B7681] hover:text-[#082D4D]"}>
+                      {tab.label}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* ── BACKER WORKSHOP SHOWCASE: 4 In-Production Projects (Discover Cards UI) ────────── */}
-          {role === "backer" && (
-            <div className="w-full max-w-[1040px] mx-auto text-left mb-12 animate-in fade-in zoom-in-95 duration-300">
-              
-              <div className="bg-white/95 backdrop-blur-md border border-[#0F4C82]/10 rounded-[28px] p-6 sm:p-8 md:p-10 shadow-[0_4px_32px_-12px_rgba(8,45,77,0.12)]">
-                
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-5 border-b border-[#E8EBEE]">
-                  <div>
-                    <span className="text-[0.72rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37] flex items-center gap-1.5">
-                      <Sparkle size={14} weight="fill" />
-                      In-Production Live Showcase
-                    </span>
-                    <h3 
-                      className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight mt-1.5 leading-snug"
-                      style={{ fontFamily: CD }}
-                    >
-                      Choose which project to <em className="italic text-[#6FD179] font-normal">back first.</em>
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#6B7681] mt-1 max-w-xl">
-                      These 4 tangible hardware projects are actively undergoing tooling, PCB testing, and pilot assembly. Select your priority project below for early backer discounts and escrow-protected milestone updates.
-                    </p>
-                  </div>
+        </div>
+      </section>
 
-                  {/* "All Projects" Quick selector */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectProject("all")}
-                    className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                      selectedProjectId === "all"
-                        ? "bg-[#6FD179] text-white border-[#6FD179] shadow-sm"
-                        : "bg-[#F7F9FA] hover:bg-[#E8F8EA] text-[#082D4D] border-[#DFE3E7] hover:border-[#6FD179]"
-                    }`}
-                  >
-                    {selectedProjectId === "all" && <CheckFat size={14} weight="fill" />}
-                    <span>Back All 4 Projects (Ecosystem Pass)</span>
-                  </button>
-                </div>
-
-                {/* 4 In-Production Projects Grid (Exact Discover Card Design) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7">
-                  {IN_PRODUCTION_PROJECTS.map((proj) => {
-                    const isSelected = selectedProjectId === proj.id;
-                    const pct = Math.min(proj.funded, 100);
-
-                    return (
-                      <article
-                        key={proj.id}
-                        className={`group flex flex-col rounded-2xl overflow-hidden bg-white border transition-all duration-300 relative ${
-                          isSelected
-                            ? "border-[#6FD179] ring-2 ring-[#6FD179]/50 shadow-[0_12px_36px_-6px_rgba(111,209,121,0.32)] -translate-y-1"
-                            : "border-[#0F4C82]/10 shadow-[0_1px_12px_rgba(8,45,77,0.05)] hover:shadow-[0_10px_34px_rgba(8,45,77,0.12)] hover:-translate-y-1.5"
-                        }`}
-                      >
-                        {/* Selected Indicator Pill */}
-                        {isSelected && (
-                          <div className="absolute top-3 left-3 z-20 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.72rem] font-bold bg-[#6FD179] text-white shadow-md">
-                            <Check size={13} weight="bold" />
-                            <span>Selected for Waitlist</span>
-                          </div>
-                        )}
-
-                        {/* Image Container with 16:10 aspect ratio matching Explore.tsx */}
-                        <div className="relative overflow-hidden aspect-[16/10] bg-[#082D4D]/05">
-                          <ImageWithFallback
-                            src={proj.image}
-                            alt={proj.name}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/65 via-[#082D4D]/10 to-transparent" />
-
-                          {/* Top-Right Production Badge */}
-                          <div className="absolute top-3 right-3 z-10">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.68rem] font-bold bg-white/95 backdrop-blur-md text-[#2A7A37] border border-[#6FD179]/40 shadow-xs">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A37] animate-pulse" />
-                              {proj.statusBadge}
-                            </span>
-                          </div>
-
-                          {/* Floating Creator Avatar & Creator Name (Bottom-Left) */}
-                          <div className="absolute bottom-3 left-3.5 z-10 flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-white flex-shrink-0 bg-white shadow-xs">
-                              <ImageWithFallback src={proj.creatorAvatar} alt={proj.creator} className="w-full h-full object-cover" />
-                            </div>
-                            <span className="text-white text-[0.75rem] font-medium drop-shadow-md">
-                              {proj.creator}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Content Body matching Explore.tsx */}
-                        <div className="flex flex-1 flex-col p-5 sm:p-6">
-                          <div className="flex items-center justify-between gap-2 mb-1.5 text-[0.7rem]">
-                            <span className="text-[#6FD179] font-bold uppercase tracking-[0.08em]">{proj.category}</span>
-                            <span className="text-[#082D4D]/45 font-medium">{proj.location}</span>
-                          </div>
-
-                          <h3
-                            className="text-[#082D4D] leading-snug mb-1 line-clamp-2"
-                            style={{ fontFamily: CD, fontSize: "1.0625rem", fontWeight: 600 }}
-                          >
-                            {proj.name}
-                          </h3>
-                          <p className="mb-2 text-[0.75rem] text-[#082D4D]/45">by {proj.creator}</p>
-
-                          <p className="text-xs text-[#082D4D]/70 mb-4 line-clamp-2 leading-relaxed">
-                            {proj.summary}
-                          </p>
-
-                          {/* Raised vs Goal & Percentage */}
-                          <div className="mt-auto pt-3 border-t border-[#082D4D]/06">
-                            <div className="mb-2 flex items-end justify-between gap-3">
-                              <div>
-                                <p className="text-base font-bold text-[#082D4D]">{proj.raised}</p>
-                                <p className="text-[0.7rem] text-[#082D4D]/45">pledged of {proj.goal}</p>
-                              </div>
-                              <span className="text-[0.8rem] font-bold text-[#6FD179]">{proj.funded}%</span>
-                            </div>
-
-                            {/* Progress Bar */}
-                            <div className="h-2 bg-[#082D4D]/08 rounded-full overflow-hidden mb-3">
-                              <div
-                                className="h-full bg-[#6FD179] rounded-full transition-all duration-500"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-
-                            {/* Meta row: Backers + Timeline */}
-                            <div className="flex items-center justify-between text-[0.72rem] text-[#082D4D]/50 mb-4">
-                              <span className="flex items-center gap-1.5 font-medium">
-                                <Users size={12} className="text-[#0F4C82]" />
-                                {proj.backers.toLocaleString()} backers
-                              </span>
-                              <span className="flex items-center gap-1.5 font-medium">
-                                <Clock size={12} className="text-[#0F4C82]" />
-                                {proj.timeline}
-                              </span>
-                            </div>
-
-                            {/* Action Row: Quick Preview + Back Project Button */}
-                            <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-[#082D4D]/06">
-                              <button
-                                type="button"
-                                onClick={() => setActiveModalProject(proj)}
-                                className="h-10 rounded-xl border border-[#0F4C82]/15 bg-white hover:bg-[#F0F6FA] text-[#0F4C82] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                              >
-                                <Eye size={14} />
-                                <span>Quick Preview</span>
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={() => handleSelectProject(proj.id)}
-                                className={`h-10 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                                  isSelected
-                                    ? "bg-[#6FD179] text-white shadow-xs hover:bg-[#62c76c]"
-                                    : "bg-[#082D4D] hover:bg-[#0c3c64] text-white"
-                                }`}
-                              >
-                                {isSelected ? (
-                                  <>
-                                    <Check size={14} weight="bold" />
-                                    <span>Selected</span>
-                                  </>
-                                ) : (
-                                  <span>Back Project</span>
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-
-                {/* Backer Banner Hint & Proceed Button */}
-                <div className="mt-7 p-3.5 sm:p-4 rounded-[14px] bg-[#E8F8EA]/70 border border-[#6FD179]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#2A7A37]">
-                  <span className="flex items-center gap-2">
-                    <ShieldCheck size={18} weight="fill" className="shrink-0" />
-                    <span>
-                      Selected for early access:{" "}
-                      <strong className="text-[#082D4D]">
-                        {selectedProjectId === "all"
-                          ? "All 4 Projects (Ecosystem Backer Pass)"
-                          : IN_PRODUCTION_PROJECTS.find((p) => p.id === selectedProjectId)?.shortName}
-                      </strong>
-                    </span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }}
-                    className="font-bold text-[#0F4C82] hover:text-[#082D4D] hover:underline cursor-pointer flex items-center gap-1 shrink-0"
-                  >
-                    <span>Proceed to reservation form</span>
-                    <ArrowRight size={13} weight="bold" />
-                  </button>
-                </div>
-
+      {/* ── KINETIC WORKSHOP STAGE: 4 In-Production Projects (Fluid Carousel) ── */}
+      {role === "backer" && (
+        <section className="pb-16 sm:pb-20 max-w-[1040px] mx-auto px-6">
+          <div className="bg-[#FAFBFD] border border-[#0F4C82]/10 rounded-[28px] p-6 sm:p-8 md:p-10 shadow-[0_4px_32px_-12px_rgba(8,45,77,0.1)]">
+            
+            {/* Stage Header & Tabs */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#E8EBEE]">
+              <div>
+                <span className="text-[0.72rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37] flex items-center gap-1.5">
+                  <RocketLaunch size={14} weight="fill" />
+                  Currently in Tooling &amp; Prototyping
+                </span>
+                <h3 
+                  className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight mt-1"
+                  style={{ fontFamily: CD }}
+                >
+                  Featured Hardware Projects
+                </h3>
               </div>
 
-            </div>
-          )}
+              {/* Project Navigation Dots & Arrow Controls */}
+              <div className="flex items-center gap-2 self-start md:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveSpotlightIdx((prev) => (prev === 0 ? IN_PRODUCTION_PROJECTS.length - 1 : prev - 1))}
+                  className="w-9 h-9 rounded-full bg-white border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
+                  aria-label="Previous project"
+                >
+                  <CaretLeft size={16} weight="bold" />
+                </button>
 
-          {/* ── Waitlist Form Shell ───────────────────────────────────────── */}
-          <div ref={formRef} className="w-full max-w-[620px] mx-auto text-left">
-            <div className="bg-white border border-[#E8EBEE] rounded-[24px] shadow-[0_1px_2px_rgba(8,45,77,0.04),0_8px_24px_-14px_rgba(8,45,77,0.14)] p-6 sm:p-9 transition-all">
-              
-              {!submittedData ? (
-                /* ── Input Form ───────────────────────────────────────── */
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-1 pb-1 border-b border-[#E8EBEE]">
-                    <span className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#2A7A37]">
-                      {role === "backer" ? "Project-Wise Early Access" : "Priority Reservation"}
+                <div className="flex items-center gap-1.5 px-2">
+                  {IN_PRODUCTION_PROJECTS.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveSpotlightIdx(idx)}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        activeSpotlightIdx === idx ? "w-6 bg-[#6FD179]" : "w-2 bg-[#DFE3E7] hover:bg-[#A3ACB5]"
+                      }`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveSpotlightIdx((prev) => (prev === IN_PRODUCTION_PROJECTS.length - 1 ? 0 : prev + 1))}
+                  className="w-9 h-9 rounded-full bg-white border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
+                  aria-label="Next project"
+                >
+                  <CaretRight size={16} weight="bold" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tactile Project Navigator Rail */}
+            <div className="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+              {IN_PRODUCTION_PROJECTS.map((proj, idx) => {
+                const isActive = activeSpotlightIdx === idx;
+                const isSelected = selectedProjectId === proj.id;
+                const IconComp = proj.icon;
+
+                return (
+                  <button
+                    key={proj.id}
+                    type="button"
+                    onClick={() => setActiveSpotlightIdx(idx)}
+                    className={`relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                      isActive
+                        ? "bg-white border-[#082D4D] text-[#082D4D] shadow-sm"
+                        : "bg-white/60 border-[#E8EBEE] text-[#6B7681] hover:text-[#082D4D] hover:bg-white"
+                    }`}
+                  >
+                    <IconComp size={15} weight={isActive ? "fill" : "regular"} className={isActive ? "text-[#0F4C82]" : "text-[#6B7681]"} />
+                    <span>{proj.shortName}</span>
+                    {isSelected && (
+                      <span className="w-2 h-2 rounded-full bg-[#6FD179] ring-2 ring-white" />
+                    )}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => handleSelectProject("all")}
+                className={`relative flex items-center gap-1.5 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                  selectedProjectId === "all"
+                    ? "bg-[#6FD179] text-white border-[#6FD179] shadow-sm"
+                    : "bg-white/60 border-[#DFE3E7] text-[#082D4D] hover:bg-[#E8F8EA]"
+                }`}
+              >
+                {selectedProjectId === "all" && <CheckFat size={13} weight="fill" />}
+                <span>Back All 4 Projects</span>
+              </button>
+            </div>
+
+            {/* Cinematic Animated Spotlight Stage */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSpotlight.id}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white rounded-2xl p-6 sm:p-8 border border-[#E8EBEE] shadow-sm"
+              >
+                {/* Left: Product Visual with 16:10 Container */}
+                <div className="lg:col-span-6 relative aspect-[16/10] rounded-xl overflow-hidden bg-[#082D4D]/05 group">
+                  <ImageWithFallback
+                    src={currentSpotlight.image}
+                    alt={currentSpotlight.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#082D4D]/60 via-transparent to-transparent" />
+
+                  {/* Top-Right Status Badge */}
+                  <div className="absolute top-3 right-3 z-10">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.68rem] font-bold bg-white/95 backdrop-blur-md text-[#2A7A37] border border-[#6FD179]/40 shadow-xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A37] animate-pulse" />
+                      {currentSpotlight.statusBadge}
                     </span>
-                    <h2 
-                      className="text-xl sm:text-2xl font-semibold text-[#082D4D] tracking-tight"
+                  </div>
+
+                  {/* Bottom Creator Attribution */}
+                  <div className="absolute bottom-3 left-3.5 z-10 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-white flex-shrink-0 bg-white">
+                      <ImageWithFallback src={currentSpotlight.creatorAvatar} alt={currentSpotlight.creator} className="w-full h-full object-cover" />
+                    </div>
+                    <span className="text-white text-[0.75rem] font-medium drop-shadow-md">
+                      {currentSpotlight.creator} · {currentSpotlight.location}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right: Tangible Story & Metrics */}
+                <div className="lg:col-span-6 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[0.7rem] font-bold uppercase tracking-[0.08em] text-[#6FD179]">
+                        {currentSpotlight.category}
+                      </span>
+                      <span className="text-[#082D4D]/30">•</span>
+                      <span className="text-[0.7rem] font-medium text-[#082D4D]/60">
+                        {currentSpotlight.stage}
+                      </span>
+                    </div>
+
+                    <h4 
+                      className="text-xl sm:text-2xl font-semibold text-[#082D4D] leading-snug mb-2"
+                      style={{ fontFamily: CD }}
+                    >
+                      {currentSpotlight.name}
+                    </h4>
+
+                    <p className="text-xs sm:text-sm text-[#082D4D]/75 leading-relaxed mb-4">
+                      {currentSpotlight.summary}
+                    </p>
+
+                    {/* Escrow Funding Stat Bar */}
+                    <div className="p-3.5 rounded-xl bg-[#F7F9FA] border border-[#E8EBEE] mb-5">
+                      <div className="flex items-end justify-between gap-3 mb-2">
+                        <div>
+                          <p className="text-base font-bold text-[#082D4D]">{currentSpotlight.raised}</p>
+                          <p className="text-[0.7rem] text-[#082D4D]/45">pledged of {currentSpotlight.goal} milestone goal</p>
+                        </div>
+                        <span className="text-sm font-bold text-[#6FD179]">{currentSpotlight.funded}%</span>
+                      </div>
+                      <div className="h-2 bg-[#082D4D]/08 rounded-full overflow-hidden mb-2.5">
+                        <div
+                          className="h-full bg-[#6FD179] rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(currentSpotlight.funded, 100)}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-[0.7rem] text-[#082D4D]/55 font-medium">
+                        <span className="flex items-center gap-1"><Users size={12} className="text-[#0F4C82]" /> {currentSpotlight.backers.toLocaleString()} backers</span>
+                        <span className="flex items-center gap-1"><Clock size={12} className="text-[#0F4C82]" /> {currentSpotlight.timeline}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dual Action Row */}
+                  <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectProject(currentSpotlight.id)}
+                      className={`w-full sm:flex-1 h-11 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        selectedProjectId === currentSpotlight.id
+                          ? "bg-[#6FD179] text-white shadow-md hover:bg-[#62c76c]"
+                          : "bg-[#082D4D] hover:bg-[#0c3c64] text-white shadow-xs"
+                      }`}
+                    >
+                      {selectedProjectId === currentSpotlight.id ? (
+                        <>
+                          <Check size={16} weight="bold" />
+                          <span>Selected for Your Pass</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Select {currentSpotlight.shortName}</span>
+                          <ArrowRight size={14} weight="bold" />
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveModalProject(currentSpotlight)}
+                      className="w-full sm:w-auto h-11 px-5 rounded-xl border border-[#DFE3E7] hover:border-[#082D4D] bg-white text-[#082D4D] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <Eye size={15} />
+                      <span>Inspect Specs</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+          </div>
+        </section>
+      )}
+
+      {/* ── THE RESERVATION STUDIO (Form + Interactive Holographic Pass) ─ */}
+      <section ref={formRef} className="pb-20 sm:pb-28 max-w-[1040px] mx-auto px-6">
+        <div className="bg-white border border-[#0F4C82]/10 rounded-[28px] p-6 sm:p-9 md:p-12 shadow-[0_12px_40px_-16px_rgba(8,45,77,0.12)]">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            
+            {/* Left Column: Interactive 3D Holographic Founder Pass (5 cols) */}
+            <div className="lg:col-span-5 flex flex-col items-center">
+              <InteractiveFounderPass
+                name={name}
+                selectedProject={selectedProjObj}
+                queueNumber={currentQueueNum}
+              />
+            </div>
+
+            {/* Right Column: Streamlined Input Form (7 cols) */}
+            <div className="lg:col-span-7">
+              {!submittedData ? (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  <div className="pb-1 border-b border-[#E8EBEE]">
+                    <span className="text-[0.7rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37]">
+                      PRIORITY PASS ALLOCATION
+                    </span>
+                    <h3 
+                      className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight mt-0.5"
                       style={{ fontFamily: CD }}
                     >
                       {role === "backer"
-                        ? `Reserve early backer tier`
+                        ? "Reserve your founder backer tier"
                         : role === "creator"
-                        ? `Apply as a founding creator`
-                        : `Join the manufacturing guild`}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[#6B7681]">
+                        ? "Apply for founding creator cohort"
+                        : "Join the Guild manufacturing network"}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#6B7681] mt-1">
                       {role === "backer"
-                        ? `Lock in early bird discounts and private milestone invites for ${
-                            selectedProjectId === "all"
-                              ? "all 4 projects"
-                              : IN_PRODUCTION_PROJECTS.find((p) => p.id === selectedProjectId)?.shortName
+                        ? `Lock in priority prototype delivery and early pricing for ${
+                            selectedProjectId === "all" ? "all 4 workshop projects" : selectedProjObj?.shortName
                           }.`
                         : role === "creator"
-                        ? `Launch with ₹0 platform commission and 48-hour 1-on-1 coaching.`
-                        : `Get pre-funded creator matchmaking for prototyping, tooling, and fulfillment.`}
+                        ? "Launch with ₹0 platform commission and 48-hour prototype coaching."
+                        : "Connect directly with pre-funded hardware creators seeking production partners."}
                     </p>
                   </div>
 
@@ -703,7 +872,7 @@ export function Waitlist() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Maya Sharma"
-                      className="h-[44px] rounded-[8px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
+                      className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
                     />
                   </div>
 
@@ -720,7 +889,7 @@ export function Waitlist() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@domain.com"
-                      className="h-[44px] rounded-[8px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
+                      className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
                     />
                   </div>
 
@@ -728,7 +897,7 @@ export function Waitlist() {
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor="wl-phone" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D] flex items-center gap-1.5">
                       <Phone size={13} className="text-[#0F4C82]" />
-                      Phone Number <span className="text-[#C2412D]">*</span>
+                      Phone / WhatsApp <span className="text-[#C2412D]">*</span>
                     </label>
                     <input
                       id="wl-phone"
@@ -737,182 +906,150 @@ export function Waitlist() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="h-[44px] rounded-[8px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
-                    />
-                    <span className="text-[0.72rem] text-[#6B7681]">
-                      We will SMS / WhatsApp your private access token prior to public launch.
-                    </span>
-                  </div>
-
-                  {/* Contextual role note */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="wl-note" className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#082D4D]">
-                      {role === "creator"
-                        ? "What are you looking to launch? (Optional)"
-                        : role === "backer"
-                        ? "Any specific feedback or questions for the creator? (Optional)"
-                        : "What manufacturing or services do you provide? (Optional)"}
-                    </label>
-                    <input
-                      id="wl-note"
-                      type="text"
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      placeholder={
-                        role === "creator"
-                          ? "e.g. Consumer Hardware, Sustainable Design, Clean Energy..."
-                          : role === "backer"
-                          ? "e.g. Interested in custom finishes, developer SDK, shipping..."
-                          : "e.g. CNC Machining, PCB Assembly, Tooling, Fulfillment..."
-                      }
-                      className="h-[44px] rounded-[8px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
+                      className="h-[44px] rounded-[10px] border border-[#DFE3E7] bg-white px-3.5 text-sm font-medium text-[#082D4D] placeholder:text-[#A3ACB5] focus:outline-none focus:border-[#082D4D] focus:ring-4 focus:ring-[#6FD179]/30 transition-all"
                     />
                   </div>
 
-                  {/* Agreement checkbox */}
-                  <label className="flex items-start gap-2.5 cursor-pointer pt-1">
-                    <input
-                      type="checkbox"
-                      checked={agreed}
-                      onChange={(e) => setAgreed(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 rounded border-[#DFE3E7] text-[#082D4D] accent-[#082D4D] focus:ring-[#6FD179]"
-                    />
-                    <span className="text-xs text-[#6B7681] leading-relaxed">
-                      Send me project milestone updates, early backer secret discount links, and private previews.
-                    </span>
-                  </label>
-
-                  {/* Submit Button (Spark Primary Pill Button) */}
+                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full font-bold text-sm sm:text-base text-[#082D4D] bg-[#6FD179] hover:bg-[#62c76c] shadow-[0_6px_16px_-8px_rgba(60,170,75,0.7)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:pointer-events-none mt-2"
+                    className="w-full h-12 rounded-full font-bold text-sm text-[#082D4D] bg-[#6FD179] hover:bg-[#62c76c] shadow-[0_8px_20px_-6px_rgba(111,209,121,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-1"
                   >
                     {isSubmitting ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-[#082D4D] border-t-transparent rounded-full animate-spin" />
-                        <span>Securing your spot...</span>
-                      </>
+                      <span>Securing your spot...</span>
                     ) : (
                       <>
-                        <span>
-                          {role === "backer" && selectedProjectId !== "all"
-                            ? `Join waitlist for ${IN_PRODUCTION_PROJECTS.find((p) => p.id === selectedProjectId)?.shortName}`
-                            : `Join the early access waitlist`}
-                        </span>
-                        <ArrowRight size={17} weight="bold" />
+                        <span>Claim My Priority Backer Pass</span>
+                        <ArrowRight size={16} weight="bold" />
                       </>
                     )}
                   </button>
 
-                  <div className="flex items-center justify-center gap-4 text-[0.72rem] text-[#6B7681] pt-1">
-                    <span className="flex items-center gap-1">
-                      <ShieldCheck size={14} className="text-[#2A7A37]" /> No spam, guaranteed
+                  <div className="flex items-center justify-between text-[0.7rem] text-[#6B7681] pt-1">
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck size={14} className="text-[#2A7A37]" />
+                      <span>Zero spam · Escrow guaranteed access</span>
                     </span>
-                    <span>•</span>
-                    <span>Direct founder updates</span>
-                    <span>•</span>
-                    <span>Unsubscribe anytime</span>
+                    <span className="font-mono">Queue #{currentQueueNum}</span>
                   </div>
                 </form>
               ) : (
-                /* ── Success Confirmation Screen ─────────────────────── */
+                /* Confirmed State Ticket */
                 <div className="flex flex-col items-center text-center py-4">
-                  {/* Green Checkmark Disc */}
-                  <div className="w-16 h-16 rounded-full bg-[#E8F8EA] flex items-center justify-center text-[#2A7A37] mb-5 shadow-sm">
-                    <CheckCircle size={36} weight="fill" />
+                  <div className="w-14 h-14 rounded-full bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center mb-4">
+                    <SealCheck size={32} weight="fill" />
                   </div>
-
-                  {/* Position badge */}
-                  <span className="inline-flex items-center h-7 px-3.5 rounded-full bg-[#082D4D] text-white text-xs font-bold tracking-wide mb-3">
-                    Early Access Pass #{submittedData.queueNumber}
-                  </span>
-
-                  <h3 
-                    className="text-2xl sm:text-3xl font-semibold text-[#082D4D] mb-2 tracking-tight"
-                    style={{ fontFamily: CD }}
-                  >
-                    You are in <em className="italic text-[#6FD179] font-normal">line!</em>
-                  </h3>
-
-                  <p className="text-sm text-[#33424F] max-w-[46ch] leading-relaxed mb-6">
-                    Thank you, <strong className="text-[#082D4D]">{submittedData.name}</strong>. 
-                    We have reserved your founding spot as a{" "}
-                    <strong className="text-[#082D4D] capitalize">{submittedData.role}</strong>. 
-                    {submittedData.projectName && (
-                      <span className="block mt-1 text-[#2A7A37] font-semibold">
-                        Priority Registered for: {submittedData.projectName}
-                      </span>
-                    )}
+                  <h4 className="text-2xl font-bold text-[#082D4D]" style={{ fontFamily: CD }}>
+                    You are in the cohort, {submittedData.name}!
+                  </h4>
+                  <p className="text-sm text-[#6B7681] mt-1 max-w-md">
+                    Your spot is locked at <strong className="text-[#082D4D]">Queue #{submittedData.queueNumber}</strong> for{" "}
+                    <strong className="text-[#082D4D]">{submittedData.projectName || "Ideakicks Cohort"}</strong>.
                   </p>
 
-                  {/* Details summary box */}
-                  <div className="w-full bg-[#F7F9FA] border border-[#E8EBEE] rounded-[16px] p-4 text-left flex flex-col gap-2 mb-6 text-xs sm:text-sm">
-                    <div className="flex justify-between items-center text-[#6B7681]">
-                      <span>Reserved for:</span>
-                      <strong className="text-[#082D4D]">{submittedData.name}</strong>
-                    </div>
-                    <div className="flex justify-between items-center text-[#6B7681]">
-                      <span>Email address:</span>
-                      <strong className="text-[#082D4D]">{submittedData.email}</strong>
-                    </div>
-                    <div className="flex justify-between items-center text-[#6B7681]">
-                      <span>Contact phone:</span>
-                      <strong className="text-[#082D4D]">{submittedData.phone}</strong>
-                    </div>
-                    {submittedData.projectName && (
-                      <div className="flex justify-between items-center text-[#6B7681]">
-                        <span>Project Interest:</span>
-                        <strong className="text-[#082D4D]">{submittedData.projectName}</strong>
-                      </div>
-                    )}
-                    <div className="flex justify-between items-center text-[#6B7681]">
-                      <span>Ecosystem role:</span>
-                      <strong className="text-[#082D4D] capitalize">{submittedData.role}</strong>
-                    </div>
-                  </div>
-
-                  {/* Share referral card */}
-                  <div className="w-full bg-[#E8F8EA]/50 border border-[#6FD179]/40 rounded-[16px] p-4 flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
-                    <div className="text-left">
-                      <p className="text-xs font-bold text-[#082D4D]">Invite another founder or backer</p>
-                      <p className="text-[0.72rem] text-[#6B7681]">Bring members of your network to fast-track cohort admission.</p>
-                    </div>
+                  <div className="mt-6 flex flex-col sm:flex-row items-center gap-3 w-full max-w-sm">
                     <button
                       type="button"
                       onClick={copyReferralLink}
-                      className="shrink-0 inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-white border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D] text-xs font-bold transition-all shadow-sm cursor-pointer"
+                      className="w-full h-10 rounded-full bg-[#082D4D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                     >
-                      {copiedLink ? (
-                        <>
-                          <Check size={14} className="text-[#2A7A37]" /> Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={14} /> Copy link
-                        </>
-                      )}
+                      {copiedLink ? <Check size={14} /> : <ShareNetwork size={14} />}
+                      <span>{copiedLink ? "Link Copied!" : "Share Waitlist Link"}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="w-full h-10 rounded-full border border-[#DFE3E7] hover:border-[#082D4D] text-[#082D4D] font-bold text-xs transition-colors cursor-pointer"
+                    >
+                      Add Another Pass
                     </button>
                   </div>
-
-                  {/* Reset action */}
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="text-xs font-semibold text-[#0F4C82] hover:text-[#082D4D] hover:underline cursor-pointer"
-                  >
-                    ← Submit another reservation
-                  </button>
                 </div>
               )}
-
             </div>
+
           </div>
 
         </div>
       </section>
 
-      {/* ── Project Details Modal ────────────────────────────────────────── */}
+      {/* ── THE 4 PILLARS OF TANGIBLE CRAFT (Minimalist Kinetic Strip) ─── */}
+      <section className="py-16 bg-[#F7F9FA] border-y border-[#E8EBEE]">
+        <div className="max-w-[1040px] mx-auto px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div className="p-5 rounded-2xl bg-white border border-[#E8EBEE] shadow-xs">
+              <span className="w-9 h-9 rounded-xl bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center font-bold mb-3">
+                <Sparkle size={18} weight="fill" />
+              </span>
+              <h5 className="font-semibold text-base text-[#082D4D]" style={{ fontFamily: CD }}>₹0 Platform Commission</h5>
+              <p className="text-xs text-[#6B7681] mt-1 leading-relaxed">The first 100 verified founding campaigns launch at 0% platform fee.</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-white border border-[#E8EBEE] shadow-xs">
+              <span className="w-9 h-9 rounded-xl bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center font-bold mb-3">
+                <Clock size={18} weight="fill" />
+              </span>
+              <h5 className="font-semibold text-base text-[#082D4D]" style={{ fontFamily: CD }}>48h Human Review</h5>
+              <p className="text-xs text-[#6B7681] mt-1 leading-relaxed">Direct 1-on-1 prototype vetting and milestone coaching from Bodhi.</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-white border border-[#E8EBEE] shadow-xs">
+              <span className="w-9 h-9 rounded-xl bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center font-bold mb-3">
+                <ShieldCheck size={18} weight="fill" />
+              </span>
+              <h5 className="font-semibold text-base text-[#082D4D]" style={{ fontFamily: CD }}>Milestone Escrow</h5>
+              <p className="text-xs text-[#6B7681] mt-1 leading-relaxed">Pledges disburse sequentially as tangible manufacturing milestones are validated.</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-white border border-[#E8EBEE] shadow-xs">
+              <span className="w-9 h-9 rounded-xl bg-[#E8F8EA] text-[#2A7A37] flex items-center justify-center font-bold mb-3">
+                <Wrench size={18} weight="fill" />
+              </span>
+              <h5 className="font-semibold text-base text-[#082D4D]" style={{ fontFamily: CD }}>The Guild Network</h5>
+              <p className="text-xs text-[#6B7681] mt-1 leading-relaxed">Direct matchmaking with pre-vetted CNC, injection tooling, and fulfillment hubs.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── CURATED FAQ (Crisp Accordion) ───────────────────────────────── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-2xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <span className="text-[0.72rem] font-bold tracking-[0.1em] uppercase text-[#2A7A37] block mb-1">
+              COMMON QUESTIONS
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-semibold text-[#082D4D]" style={{ fontFamily: CD }}>
+              Frequently asked <em className="italic text-[#6FD179] font-normal">questions</em>
+            </h2>
+          </div>
+
+          <Accordion type="single" collapsible className="w-full space-y-3.5">
+            {FAQ_ITEMS.map((item, idx) => (
+              <AccordionItem key={idx} value={`faq-${idx}`}>
+                <AccordionTrigger>
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent>
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+
+          <p className="text-center text-xs text-[#6B7681] mt-10">
+            Have a question? Reach our team directly at{" "}
+            <a href="mailto:hello@ideakicks.com" className="text-[#0F4C82] font-semibold hover:underline">
+              hello@ideakicks.com
+            </a>
+          </p>
+        </div>
+      </section>
+
+      {/* ── PROJECT SPECS MODAL (With "Got You Convinced" CTA) ──────────── */}
       {activeModalProject && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
@@ -922,7 +1059,7 @@ export function Waitlist() {
             className="relative w-full max-w-2xl bg-white rounded-[24px] shadow-2xl border border-[#E8EBEE] max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Image Hero Banner */}
+            {/* Modal Image Hero */}
             <div className="relative aspect-[21/9] sm:aspect-[24/9] w-full overflow-hidden bg-[#082D4D]/05 border-b border-[#E8EBEE]">
               <ImageWithFallback
                 src={activeModalProject.image}
@@ -958,9 +1095,9 @@ export function Waitlist() {
               </div>
             </div>
 
-            {/* Modal Header */}
+            {/* Modal Title Bar */}
             <div className="p-6 pb-4 border-b border-[#E8EBEE] bg-[#F7F9FA]">
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex items-center gap-2 mb-1">
                 <span className="text-[0.7rem] font-bold tracking-[0.08em] uppercase text-[#6FD179]">
                   {activeModalProject.category}
                 </span>
@@ -969,42 +1106,30 @@ export function Waitlist() {
                   {activeModalProject.stage}
                 </span>
               </div>
-              <h3 
-                className="text-2xl font-semibold text-[#082D4D] leading-tight"
-                style={{ fontFamily: CD }}
-              >
+              <h3 className="text-2xl font-semibold text-[#082D4D]" style={{ fontFamily: CD }}>
                 {activeModalProject.name}
               </h3>
-              <p className="text-xs sm:text-sm text-[#6B7681] mt-1">
-                {activeModalProject.tagline}
-              </p>
+              <p className="text-xs sm:text-sm text-[#6B7681] mt-1">{activeModalProject.tagline}</p>
             </div>
 
-            {/* Modal Scrollable Body */}
+            {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-6">
-              
-              {/* Innovation pitch */}
               <div>
                 <h4 className="text-xs font-bold tracking-[0.08em] uppercase text-[#0F4C82] mb-2">
                   The Innovation &amp; Problem Solved
                 </h4>
-                <p className="text-sm text-[#33424F] leading-relaxed">
-                  {activeModalProject.fullPitch}
-                </p>
+                <p className="text-sm text-[#33424F] leading-relaxed">{activeModalProject.fullPitch}</p>
               </div>
 
-              {/* Tangible craft & hardware specs */}
               <div className="bg-[#F7F9FA] rounded-[16px] p-4 border border-[#E8EBEE]">
                 <h4 className="text-xs font-bold tracking-[0.08em] uppercase text-[#082D4D] mb-1.5 flex items-center gap-1.5">
                   <Wrench size={14} className="text-[#0F4C82]" />
                   Tangible Craft &amp; Engineering Specs
                 </h4>
-                <p className="text-xs sm:text-sm text-[#6B7681] leading-relaxed">
-                  {activeModalProject.tangibleCraft}
-                </p>
+                <p className="text-xs sm:text-sm text-[#6B7681] leading-relaxed">{activeModalProject.tangibleCraft}</p>
               </div>
 
-              {/* Structured Milestones */}
+              {/* Milestones */}
               <div>
                 <h4 className="text-xs font-bold tracking-[0.08em] uppercase text-[#082D4D] mb-3">
                   Production Milestone Tracker
@@ -1043,12 +1168,10 @@ export function Waitlist() {
                 </div>
               </div>
 
-              {/* Early Backer Perks Box */}
+              {/* Backer Perk */}
               <div className="bg-[#082D4D] text-white rounded-[16px] p-5">
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#6FD179]">
-                    Exclusive Waitlist Backer Privilege
-                  </span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#6FD179]">Exclusive Backer Perk</span>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#6FD179] text-[#082D4D]">
                     {activeModalProject.backerPerks.discount}
                   </span>
@@ -1056,17 +1179,14 @@ export function Waitlist() {
                 <h5 className="text-base font-semibold text-white mb-1" style={{ fontFamily: CD }}>
                   {activeModalProject.backerPerks.edition}
                 </h5>
-                <p className="text-xs text-white/75 leading-relaxed">
-                  {activeModalProject.backerPerks.description}
-                </p>
+                <p className="text-xs text-white/75 leading-relaxed">{activeModalProject.backerPerks.description}</p>
               </div>
-
             </div>
 
-            {/* Modal Footer with the requested Convince CTA */}
+            {/* Modal Footer with Convince CTA */}
             <div className="p-4 sm:p-5 border-t border-[#E8EBEE] bg-[#F7F9FA] flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-xs text-[#6B7681] text-center sm:text-left">
-                Pledges are held in milestone escrow until proof of delivery.
+                Escrow protected · Super Early Bird pricing locked.
               </span>
               <button
                 type="button"
@@ -1081,174 +1201,6 @@ export function Waitlist() {
         </div>
       )}
 
-      {/* ── Founding Cohort Privileges (Mist Ground) ───────────────────── */}
-      <section className="py-20 md:py-28 bg-[#F7F9FA] border-b border-[#E8EBEE]">
-        <div className="max-w-[1120px] mx-auto px-6">
-          
-          <div className="flex flex-col items-center text-center mb-16">
-            <span className="text-[0.75rem] font-bold tracking-[0.08em] uppercase text-[#2A7A37] mb-2">
-              Founding Cohort Privileges
-            </span>
-            <h2 
-              className="text-3xl sm:text-4xl md:text-[2.65rem] font-semibold text-[#082D4D] tracking-tight leading-tight max-w-[24ch]"
-              style={{ fontFamily: CD }}
-            >
-              Why join early <em className="italic text-[#6FD179] font-normal">access?</em>
-            </h2>
-            <p className="text-base text-[#6B7681] max-w-[52ch] mt-3">
-              We are building a launchpad for substance over hype. Early waitlist members receive guaranteed founding advantages.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Card 1: Zero Fee */}
-            <div className="bg-white border border-[#E8EBEE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(8,45,77,0.04),0_8px_24px_-14px_rgba(8,45,77,0.14)] flex flex-col">
-              <div className="w-10 h-10 rounded-full bg-[#E8F8EA] flex items-center justify-center text-[#2A7A37] font-bold text-sm mb-4">
-                <Sparkle size={20} weight="fill" />
-              </div>
-              <h4 className="text-lg font-semibold text-[#082D4D] mb-2" style={{ fontFamily: CD }}>
-                ₹0 Platform Fee
-              </h4>
-              <p className="text-sm text-[#6B7681] leading-relaxed">
-                The first 100 verified founding campaigns launch at 0% platform commission. Keep 100% of your pledged capital.
-              </p>
-            </div>
-
-            {/* Card 2: 48h Review */}
-            <div className="bg-white border border-[#E8EBEE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(8,45,77,0.04),0_8px_24px_-14px_rgba(8,45,77,0.14)] flex flex-col">
-              <div className="w-10 h-10 rounded-full bg-[#E8F8EA] flex items-center justify-center text-[#2A7A37] font-bold text-sm mb-4">
-                <Clock size={20} weight="fill" />
-              </div>
-              <h4 className="text-lg font-semibold text-[#082D4D] mb-2" style={{ fontFamily: CD }}>
-                48h Human Review
-              </h4>
-              <p className="text-sm text-[#6B7681] leading-relaxed">
-                Direct 1-on-1 coaching and milestone goal validation from Bodhi and our review board to build launch readiness.
-              </p>
-            </div>
-
-            {/* Card 3: Escrow Security */}
-            <div className="bg-white border border-[#E8EBEE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(8,45,77,0.04),0_8px_24px_-14px_rgba(8,45,77,0.14)] flex flex-col">
-              <div className="w-10 h-10 rounded-full bg-[#E8F8EA] flex items-center justify-center text-[#2A7A37] font-bold text-sm mb-4">
-                <ShieldCheck size={20} weight="fill" />
-              </div>
-              <h4 className="text-lg font-semibold text-[#082D4D] mb-2" style={{ fontFamily: CD }}>
-                Milestone Escrow
-              </h4>
-              <p className="text-sm text-[#6B7681] leading-relaxed">
-                Pledges are safeguarded in escrow and disbursed sequentially as creators fulfill verifiable production stages.
-              </p>
-            </div>
-
-            {/* Card 4: The Guild */}
-            <div className="bg-white border border-[#E8EBEE] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(8,45,77,0.04),0_8px_24px_-14px_rgba(8,45,77,0.14)] flex flex-col">
-              <div className="w-10 h-10 rounded-full bg-[#E8F8EA] flex items-center justify-center text-[#2A7A37] font-bold text-sm mb-4">
-                <Wrench size={20} weight="fill" />
-              </div>
-              <h4 className="text-lg font-semibold text-[#082D4D] mb-2" style={{ fontFamily: CD }}>
-                The Guild Network
-              </h4>
-              <p className="text-sm text-[#6B7681] leading-relaxed">
-                Immediate matchmaking with pre-vetted rapid prototypers, tooling fabricators, and fulfillment partners.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── Brand Foundations Editorial Banner ──────────────────────────── */}
-      <section className="py-20 md:py-24 bg-white border-b border-[#E8EBEE]">
-        <div className="max-w-[1120px] mx-auto px-6">
-          
-          <div className="bg-[#082D4D] text-white rounded-[24px] p-8 sm:p-12 md:p-16 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
-            {/* Ambient subtle glow */}
-            <div 
-              className="pointer-events-none absolute -right-20 -top-20 w-80 h-80 rounded-full bg-[#6FD179]/15 blur-3xl"
-              aria-hidden="true" 
-            />
-
-            <div className="max-w-2xl relative z-10">
-              <span className="text-xs font-bold tracking-[0.14em] uppercase text-[#6FD179] mb-3 block">
-                MOTION STARTS HERE
-              </span>
-              <h3 
-                className="text-2xl sm:text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight mb-4"
-                style={{ fontFamily: CD }}
-              >
-                Where ideas stop sitting <em className="italic text-[#6FD179] font-normal">still.</em>
-              </h3>
-              <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-[56ch]">
-                Ideakicks creates infrastructure that allows any entrepreneur to bring their ideas to the market, 
-                from India to the world. We execute ideas for budding founders and young startups to help them 
-                achieve product-market fit.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto relative z-10 shrink-0">
-              <a 
-                href="#top"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full font-bold text-sm text-[#082D4D] bg-[#6FD179] hover:bg-[#62c76c] transition-all duration-200 cursor-pointer shadow-md"
-              >
-                Reserve my spot
-              </a>
-              <Link 
-                to="/about"
-                className="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-full font-bold text-sm text-white/90 border border-white/20 hover:bg-white/10 transition-all duration-200"
-              >
-                About Ideakicks
-              </Link>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── Pre-Launch FAQ Accordion (Unified Accordion UI) ─────────────── */}
-      <section className="section-padding bg-white border-b border-[#E8EBEE]">
-        <div className="container-base max-w-3xl mx-auto">
-          <div className="text-center mb-10">
-            <span className="text-[0.75rem] font-bold tracking-[0.08em] uppercase text-[#2A7A37] mb-2 block">
-              Common Questions
-            </span>
-            <h2 
-              className="heading-section text-[#082D4D]"
-              style={{ fontFamily: CD }}
-            >
-              Frequently asked <em className="italic text-[#6FD179] font-normal">questions</em>
-            </h2>
-          </div>
-
-          <Accordion type="single" collapsible className="w-full space-y-4">
-            {FAQ_ITEMS.map((item, i) => (
-              <AccordionItem key={i} value={`item-${i}`}>
-                <AccordionTrigger>
-                  {item.q}
-                </AccordionTrigger>
-                <AccordionContent>
-                  {item.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-
-          {/* Bottom quick reassurance */}
-          <div className="mt-12 text-center">
-            <p className="text-xs text-[#6B7681]">
-              Have a specific question or partnership inquiry? Reach out directly to{" "}
-              <a href="mailto:hello@ideakicks.com" className="text-[#0F4C82] font-semibold hover:underline">
-                hello@ideakicks.com
-              </a>
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
