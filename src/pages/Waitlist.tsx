@@ -197,19 +197,6 @@ export function Waitlist() {
       >
         <div className="max-w-[1120px] mx-auto px-6 relative z-10 flex flex-col items-center text-center">
           
-          {/* Header pill chips */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-            <span className="inline-flex items-center h-7 px-3.5 rounded-full bg-white/80 backdrop-blur-sm text-[#082D4D] text-xs font-bold border border-[#082D4D]/10 shadow-sm">
-              Early Access v1.0
-            </span>
-            <span className="inline-flex items-center h-7 px-3.5 rounded-full bg-[#E8F8EA] text-[#2A7A37] text-xs font-bold border border-[#6FD179]/30">
-              ● Pre-Launch Phase
-            </span>
-            <span className="inline-flex items-center h-7 px-3.5 rounded-full bg-white/70 backdrop-blur-sm text-[#0F4C82] text-xs font-semibold border border-[#082D4D]/08">
-              Founding Creator Privileges
-            </span>
-          </div>
-
           {/* Clash Display Headline with exactly one italic Spark word */}
           <h1 
             className="text-[2.75rem] sm:text-[3.5rem] md:text-[4.25rem] lg:text-[4.75rem] font-semibold text-[#082D4D] leading-[1.06] tracking-[-0.025em] max-w-[20ch] mb-6"

@@ -104,14 +104,9 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         to={link.to}
-                        className="inline-flex items-center gap-1.5 text-sm text-white/55 hover:text-white transition-colors duration-200"
+                        className="text-sm text-white/55 hover:text-white transition-colors duration-200"
                       >
-                        <span>{link.label}</span>
-                        {link.to === "/waitlist" && (
-                          <span className="text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-[#6FD179]/20 text-[#6FD179] border border-[#6FD179]/30">
-                            Early Access
-                          </span>
-                        )}
+                        {link.label}
                       </Link>
                     </li>
                   ))}
