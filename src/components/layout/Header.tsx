@@ -38,6 +38,7 @@ const GRADIENT_HEADER_ROUTES = new Set([
   "/success-stories",
   "/contact",
   "/legal",
+  "/waitlist",
 ]);
 
 export function Header() {

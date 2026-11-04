@@ -24,6 +24,7 @@ import { Legal } from "../pages/Legal";
 
 import { ProjectWizard } from "../pages/ProjectWizard";
 import { CreatorStudio } from "../pages/CreatorStudio";
+import { Waitlist } from "../pages/Waitlist";
 
 import { Toaster } from "sonner";
 import { ScrollToTop } from "../components/common/ScrollToTop";
@@ -31,7 +32,7 @@ import { CharacterCursor } from "../components/common/CharacterCursor";
 
 const NO_FOOTER = ["/login", "/signup", "/forgot-password", "/onboarding", "/start/application"];
 const NO_HEADER = ["/creator-studio"];
-const NO_CTA = ["/login", "/signup", "/forgot-password", "/onboarding", "/start/application", "/creator-studio", "/dashboard", "/campaign"];
+const NO_CTA = ["/login", "/signup", "/forgot-password", "/onboarding", "/start/application", "/creator-studio", "/dashboard", "/campaign", "/waitlist"];
 
 function AppLayout() {
   const { pathname } = useLocation();
@@ -71,6 +72,7 @@ function AppLayout() {
         <Route path="/success-stories" element={<SuccessStories />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/legal" element={<Legal />} />
+        <Route path="/waitlist" element={<Waitlist />} />
         <Route path="/blog" element={<Navigate to="/explore" replace />} />
         <Route path="*" element={<Home />} />
       </Routes>
