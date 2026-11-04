@@ -344,6 +344,9 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .flip-card-container:hover {
+    transform: rotate(0deg) translateY(-8px) scale(1.02) !important;
+  }
   .flip-card-container:hover .flip-card-inner {
     transform: rotateY(180deg);
   }

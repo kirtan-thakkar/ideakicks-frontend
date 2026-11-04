@@ -60,7 +60,7 @@ export function FooterCharacters() {
           return (
             <div
               key={char.id}
-              className="flip-card-container group h-[420px] w-full max-w-[320px] mx-auto lg:max-w-none cursor-pointer select-none transition-transform duration-500 ease-out"
+              className="flip-card-container group h-[445px] sm:h-[455px] lg:h-[450px] w-full max-w-[320px] mx-auto lg:max-w-none cursor-pointer select-none transition-transform duration-500 ease-out"
               style={{
                 transform: isFlipped
                   ? "rotate(0deg) translateY(-10px) scale(1.02)"
@@ -72,7 +72,7 @@ export function FooterCharacters() {
             >
               <div className={`flip-card-inner rounded-3xl ${isFlipped ? "is-flipped" : ""}`}>
                 {/* ─── FRONT FACE ─── */}
-                <div className="flip-card-front bg-white/08 hover:bg-white/12 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:border-[#6FD179]/60 shadow-[0_16px_36px_rgba(0,0,0,0.35)] flex flex-col items-center justify-between transition-colors duration-300">
+                <div className="flip-card-front bg-white/08 hover:bg-white/12 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/20 hover:border-[#6FD179]/60 shadow-[0_16px_36px_rgba(0,0,0,0.35)] flex flex-col items-center justify-between transition-colors duration-300">
                   {/* Subtle top indicator */}
                   <div className="w-full flex items-center justify-end text-white/40 group-hover:text-[#6FD179] transition-colors">
                     <span className="text-[0.7rem] flex items-center gap-1 font-medium">
@@ -82,7 +82,7 @@ export function FooterCharacters() {
                   </div>
 
                   {/* Character Illustration */}
-                  <div className="relative w-40 h-40 sm:w-44 sm:h-44 flex items-center justify-center my-auto">
+                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center my-auto">
                     {/* Soft ambient glow behind illustration */}
                     <div
                       className="pointer-events-none absolute inset-0 rounded-full blur-2xl transition-opacity duration-300"
@@ -114,7 +114,7 @@ export function FooterCharacters() {
 
                 {/* ─── BACK FACE ─── */}
                 <div
-                  className="flip-card-back bg-[#06243E] backdrop-blur-2xl rounded-3xl p-6 border-2 border-[#6FD179]/70 shadow-[0_24px_60px_rgba(0,0,0,0.7)] flex flex-col justify-between text-white"
+                  className="flip-card-back bg-[#06243E] backdrop-blur-2xl rounded-3xl p-5 sm:p-5.5 border-2 border-[#6FD179]/70 shadow-[0_24px_60px_rgba(0,0,0,0.7)] flex flex-col justify-between text-white overflow-hidden"
                   onClick={(e) => {
                     // Prevent closing when clicking links or buttons on the back
                     if ((e.target as HTMLElement).closest("a")) {
@@ -123,42 +123,42 @@ export function FooterCharacters() {
                   }}
                 >
                   {/* Top Bar: Icon + Name */}
-                  <div className="flex items-center gap-3 pb-3 border-b border-white/10">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 p-1.5 border border-white/20 flex-shrink-0 flex items-center justify-center">
+                  <div className="flex items-center gap-2.5 pb-2.5 border-b border-white/10 shrink-0">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white/10 p-1.5 border border-white/20 flex-shrink-0 flex items-center justify-center">
                       <img src={char.svg} alt={char.name} className="w-full h-full object-contain" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h4
-                        className="text-xl sm:text-2xl font-semibold text-white leading-tight"
+                        className="text-lg sm:text-xl font-semibold text-white leading-tight truncate"
                         style={{ fontFamily: CD }}
                       >
                         {char.name}
                       </h4>
-                      <p className="text-xs text-[#6FD179] font-semibold uppercase tracking-wider">
+                      <p className="text-[0.6875rem] sm:text-xs text-[#6FD179] font-semibold uppercase tracking-wider truncate">
                         {char.title}
                       </p>
                     </div>
                   </div>
 
                   {/* Middle Content: Tagline & Bio */}
-                  <div className="my-auto py-2">
-                    <p className="text-sm text-white/95 italic font-medium leading-snug mb-3">
+                  <div className="flex-1 min-h-0 flex flex-col justify-center py-2.5 overflow-hidden">
+                    <p className="text-xs sm:text-[0.8125rem] text-white/95 italic font-medium leading-snug mb-2.5">
                       "{char.tagline}"
                     </p>
-                    <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+                    <p className="text-[0.75rem] sm:text-xs text-white/80 leading-relaxed">
                       {char.bio}
                     </p>
                   </div>
 
                   {/* Bottom Action CTA */}
-                  <div className="pt-3 border-t border-white/10">
+                  <div className="pt-2.5 border-t border-white/10 shrink-0 mt-auto w-full">
                     <Link
                       to={char.link}
-                      className="inline-flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-[#6FD179] text-[#082D4D] hover:bg-[#5bc468] transition-all duration-200 group/link shadow-md"
+                      className="inline-flex items-center justify-between w-full py-2.5 px-3.5 rounded-xl text-xs sm:text-xs font-semibold bg-[#6FD179] text-[#082D4D] hover:bg-[#5bc468] transition-all duration-200 group/link shadow-md"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <span>{char.linkLabel}</span>
-                      <ArrowRight size={14} weight="bold" className="transition-transform group-hover/link:translate-x-1" />
+                      <span className="truncate">{char.linkLabel}</span>
+                      <ArrowRight size={13} weight="bold" className="shrink-0 ml-1.5 transition-transform group-hover/link:translate-x-1" />
                     </Link>
                   </div>
                 </div>
