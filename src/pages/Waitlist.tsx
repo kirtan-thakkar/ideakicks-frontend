@@ -15,6 +15,12 @@ import {
   User 
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../components/ui/accordion";
 
 const CD = "'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 const SAT = "'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
@@ -32,6 +38,33 @@ interface WaitlistEntry {
 }
 
 const STORAGE_KEY = "ideakicks_waitlist";
+
+const FAQ_ITEMS = [
+  {
+    q: "When will early access begin?",
+    a: "We are admitting waitlist members in batches beginning Q4 2026. Waitlist priority is ordered by registration timestamp, so earlier registrations receive access first.",
+  },
+  {
+    q: "What are the qualifications to launch as a creator?",
+    a: "Creators must have a functional prototype, CAD drawings, or clear technical proof-of-concept. Ideakicks does not permit render-only concepts or unverified claims.",
+  },
+  {
+    q: "What privileges do founding cohort members receive?",
+    a: "Founding creators receive 0% platform commission on their first campaign, 48-hour pitch coaching, and direct access to vetted manufacturing suppliers. Early backers get priority pledge access.",
+  },
+  {
+    q: "How does milestone escrow protect backer pledges?",
+    a: "Unlike traditional platforms that disburse 100% of funds immediately, Ideakicks holds capital in escrow. Funds are disbursed in tranches as creators provide verified milestone updates.",
+  },
+  {
+    q: "Can international founders and backers participate?",
+    a: "Yes. While founded in India, Ideakicks supports cross-border backing, global currency processing, and international logistics partnerships.",
+  },
+  {
+    q: "How will I know when my early access invitation is ready?",
+    a: "We will notify you via email and send your invitation code directly to the phone number you provided when your cohort opens.",
+  },
+];
 
 export function Waitlist() {
   const [role, setRole] = useState<PersonaRole>("creator");
@@ -584,76 +617,36 @@ export function Waitlist() {
         </div>
       </section>
 
-      {/* ── Pre-Launch FAQ Accordion ────────────────────────────────────── */}
-      <section className="py-20 md:py-24 bg-[#F7F9FA]">
-        <div className="max-w-[760px] mx-auto px-6">
-          
-          <div className="text-center mb-12">
+      {/* ── Pre-Launch FAQ Accordion (Unified Accordion UI) ─────────────── */}
+      <section className="section-padding bg-white border-b border-[#E8EBEE]">
+        <div className="container-base max-w-3xl mx-auto">
+          <div className="text-center mb-10">
             <span className="text-[0.75rem] font-bold tracking-[0.08em] uppercase text-[#2A7A37] mb-2 block">
               Common Questions
             </span>
-            <h3 
-              className="text-2xl sm:text-3xl font-semibold text-[#082D4D] tracking-tight"
+            <h2 
+              className="heading-section text-[#082D4D]"
               style={{ fontFamily: CD }}
             >
               Frequently asked <em className="italic text-[#6FD179] font-normal">questions</em>
-            </h3>
+            </h2>
           </div>
 
-          <div className="bg-white border border-[#E8EBEE] rounded-[16px] px-6 sm:px-8 py-2 shadow-sm divide-y divide-[#E8EBEE]">
-            
-            <details className="group py-5" open>
-              <summary className="flex justify-between items-center cursor-pointer list-none text-base font-semibold text-[#082D4D]">
-                <span>When will early access begin?</span>
-                <span className="text-[#6B7681] group-open:rotate-180 transition-transform duration-200">
-                  ↓
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-[#6B7681] leading-relaxed">
-                We are admitting waitlist members in batches beginning Q4 2026. Waitlist priority is ordered by registration timestamp, so earlier registrations receive access first.
-              </p>
-            </details>
-
-            <details className="group py-5">
-              <summary className="flex justify-between items-center cursor-pointer list-none text-base font-semibold text-[#082D4D]">
-                <span>What are the qualifications to launch as a creator?</span>
-                <span className="text-[#6B7681] group-open:rotate-180 transition-transform duration-200">
-                  ↓
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-[#6B7681] leading-relaxed">
-                Creators must have a functional prototype, CAD drawings, or clear technical proof-of-concept. Ideakicks does not permit render-only concepts or unverified claims.
-              </p>
-            </details>
-
-            <details className="group py-5">
-              <summary className="flex justify-between items-center cursor-pointer list-none text-base font-semibold text-[#082D4D]">
-                <span>How does milestone escrow protect backer pledges?</span>
-                <span className="text-[#6B7681] group-open:rotate-180 transition-transform duration-200">
-                  ↓
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-[#6B7681] leading-relaxed">
-                Unlike traditional platforms that disburse 100% of funds immediately, Ideakicks holds capital in escrow. Funds are disbursed in tranches as creators provide verified milestone updates.
-              </p>
-            </details>
-
-            <details className="group py-5">
-              <summary className="flex justify-between items-center cursor-pointer list-none text-base font-semibold text-[#082D4D]">
-                <span>Can international founders and backers participate?</span>
-                <span className="text-[#6B7681] group-open:rotate-180 transition-transform duration-200">
-                  ↓
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-[#6B7681] leading-relaxed">
-                Yes. While founded in India, Ideakicks supports cross-border backing, global currency processing, and international logistics partnerships.
-              </p>
-            </details>
-
-          </div>
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {FAQ_ITEMS.map((item, i) => (
+              <AccordionItem key={i} value={`item-${i}`}>
+                <AccordionTrigger>
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent>
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
 
           {/* Bottom quick reassurance */}
-          <div className="mt-10 text-center">
+          <div className="mt-12 text-center">
             <p className="text-xs text-[#6B7681]">
               Have a specific question or partnership inquiry? Reach out directly to{" "}
               <a href="mailto:hello@ideakicks.com" className="text-[#0F4C82] font-semibold hover:underline">
@@ -661,7 +654,6 @@ export function Waitlist() {
               </a>
             </p>
           </div>
-
         </div>
       </section>
     </div>
